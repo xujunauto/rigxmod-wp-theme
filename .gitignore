@@ -1,0 +1,39 @@
+# WordPress
+wp-config.php
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/cache/
+wp-content/advanced-cache.php
+wp-content/object-cache.php
+wp-content/blog.dir
+
+# Themes - ignore other themes
+# (we only track our own theme)
+
+# Plugins
+# (plugins are managed via WP admin / composer)
+
+# Logs
+*.log
+error_log
+access.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Environment
+.env
+.env.local
