@@ -43,6 +43,9 @@
                             <a href="https://x.com/rigxmod" target="_blank" rel="noopener" aria-label="X">
                                 <i class="fab fa-x-twitter"></i>
                             </a>
+                            <a href="https://wa.me/8619157298808" target="_blank" rel="noopener" aria-label="WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
                         </div>
                     </div>
 
