@@ -83,10 +83,32 @@
                     </div>
                 </div>
                 <style>
-                    .header-gtranslate { display:flex; align-items:center; }
+                    .header-gtranslate { display:flex; align-items:center; position:relative; }
                     .header-gtranslate .gtranslate_wrapper,
                     .header-gtranslate #gt_float_wrapper { position:static !important; box-shadow:none !important; }
-                    .header-gtranslate .gt_float_switcher { box-shadow:none !important; border:1px solid #e5e5e5 !important; border-radius:4px !important; font-size:13px !important; }
+                    .header-gtranslate .gt_float_switcher { position:relative !important; box-shadow:none !important; border:1px solid #e5e5e5 !important; border-radius:4px !important; font-size:13px !important; padding:4px 8px !important; cursor:pointer !important; }
+                    .header-gtranslate .gt_options {
+                        position:absolute !important;
+                        top:100% !important;
+                        bottom:auto !important;
+                        left:0 !important;
+                        right:auto !important;
+                        margin-top:4px !important;
+                        max-height:300px !important;
+                        overflow-y:auto !important;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15) !important;
+                        border-radius:4px !important;
+                        z-index:99999 !important;
+                        background:#fff !important;
+                    }
+                    .header-gtranslate .gt_options a {
+                        display:block !important;
+                        padding:8px 12px !important;
+                        white-space:nowrap !important;
+                        font-size:13px !important;
+                        color:#333 !important;
+                    }
+                    .header-gtranslate .gt_options a:hover { background:#f5f5f5 !important; }
                     .header-gtranslate img { vertical-align:middle; }
                     .header-gtranslate select { font-size:13px; padding:4px 8px; border:1px solid #ddd; border-radius:4px; background:#fff; }
                 </style>
