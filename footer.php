@@ -4,6 +4,34 @@
  *
  * @package RIGXMOD_AutoZone
  */
+
+// Newsletter form handler
+$nl_message = '';
+$nl_type    = '';
+if ( isset( $_POST['rigxmod_nl_email'] ) ) {
+    $nl_nonce = isset( $_POST['rigxmod_nl_nonce'] ) ? wp_unslash( $_POST['rigxmod_nl_nonce'] ) : '';
+    if ( ! wp_verify_nonce( $nl_nonce, 'rigxmod_newsletter' ) ) {
+        $nl_message = __( 'Security check failed. Please try again.', 'rigxmod-autozone' );
+        $nl_type    = 'error';
+    } else {
+        $nl_email = sanitize_email( wp_unslash( $_POST['rigxmod_nl_email'] ) );
+        if ( ! is_email( $nl_email ) ) {
+            $nl_message = __( 'Please enter a valid email address.', 'rigxmod-autozone' );
+            $nl_type    = 'error';
+        } else {
+            $emails = get_option( 'rigxmod_newsletter_emails', array() );
+            if ( in_array( $nl_email, $emails, true ) ) {
+                $nl_message = __( 'You are already subscribed. Thank you!', 'rigxmod-autozone' );
+                $nl_type    = 'success';
+            } else {
+                $emails[]   = $nl_email;
+                update_option( 'rigxmod_newsletter_emails', $emails );
+                $nl_message = __( 'Successfully subscribed! Watch for exclusive deals in your inbox.', 'rigxmod-autozone' );
+                $nl_type    = 'success';
+            }
+        }
+    }
+}
 ?>
     </div><!-- #content -->
 
@@ -100,8 +128,14 @@
                         <p style="color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:16px;">
                             <?php esc_html_e( 'Subscribe for exclusive deals, new products and off-road tips.', 'rigxmod-autozone' ); ?>
                         </p>
-                        <form style="display:flex;gap:8px;">
-                            <input type="email" placeholder="<?php esc_attr_e( 'Your email', 'rigxmod-autozone' ); ?>" style="flex:1;padding:10px 12px;border:none;border-radius:4px;font-size:13px;">
+                        <?php if ( $nl_message ) : ?>
+                            <p style="color:<?php echo $nl_type === 'success' ? '#7fff7f' : '#ffb3b3'; ?>;font-size:13px;margin-bottom:12px;padding:8px 10px;background:rgba(0,0,0,0.2);border-radius:4px;">
+                                <?php echo esc_html( $nl_message ); ?>
+                            </p>
+                        <?php endif; ?>
+                        <form method="post" action="" style="display:flex;gap:8px;">
+                            <?php wp_nonce_field( 'rigxmod_newsletter', 'rigxmod_nl_nonce' ); ?>
+                            <input type="email" name="rigxmod_nl_email" placeholder="<?php esc_attr_e( 'Your email', 'rigxmod-autozone' ); ?>" required style="flex:1;padding:10px 12px;border:none;border-radius:4px;font-size:13px;">
                             <button type="submit" style="padding:10px 16px;background:#E31937;color:#fff;border:none;border-radius:4px;font-weight:600;cursor:pointer;font-size:13px;">
                                 <?php esc_html_e( 'Join', 'rigxmod-autozone' ); ?>
                             </button>
