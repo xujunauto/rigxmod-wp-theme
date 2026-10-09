@@ -23,7 +23,7 @@
         <!-- Top Promo Bar -->
         <div class="header-top-bar">
             <div class="container">
-                <span><?php echo esc_html( get_theme_mod( 'rigxmod_top_bar_text', 'FREE SHIPPING on orders over $299. Worldwide delivery.' ) ); ?></span>
+                <span><?php echo esc_html( get_theme_mod( 'rigxmod_top_bar_text', 'Premium Off-Road Parts | Worldwide Shipping | Quality Guaranteed' ) ); ?></span>
             </div>
         </div>
 
@@ -72,12 +72,24 @@
 
                     <a href="<?php echo esc_url( wc_get_cart_url() ); ?>" class="header-action-item">
                         <i class="fas fa-shopping-cart"></i>
-                        <span><?php esc_html_e( 'Cart', 'rigxmod-autozone' ); ?></span>
+                        <span><?php esc_html_e( 'Shopping Cart', 'rigxmod-autozone' ); ?></span>
                         <?php if ( WC()->cart && WC()->cart->get_cart_contents_count() > 0 ) : ?>
                             <span class="cart-badge"><?php echo esc_html( WC()->cart->get_cart_contents_count() ); ?></span>
                         <?php endif; ?>
                     </a>
+
+                    <div class="header-action-item header-gtranslate">
+                        <?php echo do_shortcode( '[gtranslate]' ); ?>
+                    </div>
                 </div>
+                <style>
+                    .header-gtranslate { display:flex; align-items:center; }
+                    .header-gtranslate .gtranslate_wrapper,
+                    .header-gtranslate #gt_float_wrapper { position:static !important; box-shadow:none !important; }
+                    .header-gtranslate .gt_float_switcher { box-shadow:none !important; border:1px solid #e5e5e5 !important; border-radius:4px !important; font-size:13px !important; }
+                    .header-gtranslate img { vertical-align:middle; }
+                    .header-gtranslate select { font-size:13px; padding:4px 8px; border:1px solid #ddd; border-radius:4px; background:#fff; }
+                </style>
             </div>
         </div>
 
