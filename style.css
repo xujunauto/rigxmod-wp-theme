@@ -4,7 +4,7 @@ Theme URI: https://rigxmod.com
 Author: RIGX MOD
 Author URI: https://rigxmod.com
 Description: AutoZone-inspired e-commerce theme for RIGX MOD off-road parts. Clean, professional, conversion-focused design with Tesla red and Cloudflare orange accents.
-Version: 1.0.0
+Version: 1.0.2
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
@@ -1898,4 +1898,222 @@ textarea.form-control {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border: 0;
+}
+
+/* ============================================
+   SINGLE PRODUCT PAGE
+   ============================================ */
+.woocommerce div.product .product_title {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.woocommerce div.product p.price,
+.woocommerce div.product span.price {
+    color: var(--rm-primary);
+    font-size: 28px;
+    font-weight: 700;
+    margin: var(--rm-spacing-md) 0;
+}
+
+.woocommerce div.product p.price del {
+    color: var(--rm-text-muted);
+    font-size: 0.7em;
+    font-weight: 400;
+}
+
+.woocommerce div.product p.price ins {
+    text-decoration: none;
+}
+
+.woocommerce div.product form.cart {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    margin: var(--rm-spacing-lg) 0;
+}
+
+.woocommerce div.product form.cart div.quantity {
+    margin: 0;
+    float: none;
+}
+
+.woocommerce div.product form.cart .qty {
+    width: 70px;
+    min-height: 48px;
+    padding: 0 12px;
+    border: 1px solid var(--rm-border-color);
+    border-radius: var(--rm-border-radius);
+    font-size: var(--rm-font-lg);
+}
+
+.woocommerce div.product form.cart .button.single_add_to_cart_button {
+    flex: 1;
+    min-height: 48px;
+    padding: 0 40px;
+    background-color: var(--rm-primary);
+    color: var(--rm-white);
+    border: none;
+    border-radius: var(--rm-border-radius);
+    font-size: var(--rm-font-lg);
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--rm-transition);
+}
+
+.woocommerce div.product form.cart .button.single_add_to_cart_button:hover {
+    background-color: var(--rm-primary-dark);
+    color: var(--rm-white);
+}
+
+.woocommerce div.product .woocommerce-product-details__short-description {
+    color: var(--rm-text-secondary);
+    line-height: 1.7;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs {
+    padding: 0;
+    margin: 0 0 var(--rm-spacing-md);
+    border-bottom: 2px solid var(--rm-border-color);
+    border-radius: 0;
+    list-style: none;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs li {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    margin: 0 0 -2px;
+    padding: 0;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs li::before,
+.woocommerce div.product .woocommerce-tabs ul.tabs li::after {
+    display: none;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs li a {
+    display: inline-block;
+    padding: 12px 20px;
+    font-weight: 600;
+    color: var(--rm-text-secondary);
+    border-bottom: 2px solid transparent;
+}
+
+.woocommerce div.product .woocommerce-tabs ul.tabs li.active a {
+    color: var(--rm-primary);
+    border-bottom-color: var(--rm-primary);
+}
+
+.woocommerce div.product .woocommerce-tabs .panel {
+    padding: var(--rm-spacing-md) 0;
+    line-height: 1.8;
+}
+
+.woocommerce div.product .product_meta {
+    padding-top: var(--rm-spacing-md);
+    border-top: 1px solid var(--rm-border-color);
+    font-size: var(--rm-font-sm);
+    color: var(--rm-text-muted);
+}
+
+.woocommerce div.product .product_meta a {
+    color: var(--rm-text-secondary);
+}
+
+.woocommerce div.product .product_meta a:hover {
+    color: var(--rm-primary);
+}
+
+/* ============================================
+   CART & CHECKOUT (WooCommerce Blocks)
+   ============================================ */
+.woocommerce-cart .wc-block-cart__submit-button,
+.woocommerce-checkout .wc-block-components-checkout-place-order-button {
+    background-color: var(--rm-primary);
+    border-color: var(--rm-primary);
+    color: var(--rm-white);
+    border-radius: var(--rm-border-radius);
+    font-weight: 700;
+    font-size: var(--rm-font-lg);
+    padding: 14px 32px;
+    text-align: center;
+    transition: var(--rm-transition);
+}
+
+.woocommerce-cart .wc-block-cart__submit-button:hover,
+.woocommerce-cart .wc-block-cart__submit-button:focus,
+.woocommerce-checkout .wc-block-components-checkout-place-order-button:hover,
+.woocommerce-checkout .wc-block-components-checkout-place-order-button:focus {
+    background-color: var(--rm-primary-dark);
+    border-color: var(--rm-primary-dark);
+    color: var(--rm-white);
+}
+
+.woocommerce-cart .wp-block-woocommerce-cart-order-summary-block,
+.woocommerce-checkout .wp-block-woocommerce-checkout-order-summary-block {
+    border: 1px solid var(--rm-border-color);
+    border-radius: var(--rm-border-radius-lg);
+    padding: var(--rm-spacing-lg);
+    background: var(--rm-white);
+}
+
+.wc-block-components-totals-item__label {
+    font-weight: 600;
+}
+
+.wc-block-components-totals-footer-item .wc-block-components-totals-item__value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--rm-text-primary);
+}
+
+.woocommerce-cart .wc-block-components-text-input input:focus,
+.woocommerce-checkout .wc-block-components-text-input input:focus {
+    border-color: var(--rm-primary);
+    box-shadow: 0 0 0 1px var(--rm-primary);
+    outline: none;
+}
+
+.woocommerce-cart input[type="checkbox"],
+.woocommerce-checkout input[type="checkbox"],
+.woocommerce-checkout input[type="radio"] {
+    accent-color: var(--rm-primary);
+}
+
+.woocommerce-checkout .wc-block-components-checkout-step__title {
+    font-size: var(--rm-font-xl);
+    font-weight: 700;
+}
+
+.wp-block-woocommerce-cart .wc-block-components-product-name,
+.wp-block-woocommerce-checkout .wc-block-components-product-name {
+    color: var(--rm-text-primary);
+    font-weight: 600;
+}
+
+.wp-block-woocommerce-cart .wc-block-components-product-name:hover {
+    color: var(--rm-primary);
+}
+
+/* Restore "Proceed to Checkout" button (cart block renders only the sticky
+   variant and hides it by default, leaving no checkout button on desktop) */
+.woocommerce-cart .wc-block-cart__submit-container--sticky {
+    display: block !important;
+    position: static;
+    margin-top: var(--rm-spacing-md);
+}
+
+/* Pin cart subtotal label in English - Google auto-translate
+   mistranslates the isolated "Subtotal" string in this context */
+.woocommerce-cart .wc-block-components-totals-footer-item > .wc-block-components-totals-item__label {
+    font-size: 0;
+}
+
+.woocommerce-cart .wc-block-components-totals-footer-item > .wc-block-components-totals-item__label::after {
+    content: "Subtotal";
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--rm-text-primary);
 }

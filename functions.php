@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Theme version
-define( 'RIGXMOD_VERSION', '1.0.0' );
+define( 'RIGXMOD_VERSION', '1.0.2' );
 define( 'RIGXMOD_DIR', get_template_directory() );
 define( 'RIGXMOD_URI', get_template_directory_uri() );
 
