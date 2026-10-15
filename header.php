@@ -127,11 +127,12 @@
                         'depth'          => 1,
                     ) );
                 } else {
-                    // Fallback: show product categories
+                    // Fallback: list the vehicle categories that actually contain products
+                    $rigx_nav_parent = get_term_by( 'slug', 'by-vehicle', 'product_cat' );
                     $categories = get_terms( array(
                         'taxonomy'   => 'product_cat',
                         'hide_empty' => true,
-                        'parent'     => 0,
+                        'parent'     => $rigx_nav_parent ? (int) $rigx_nav_parent->term_id : 0,
                         'number'     => 8,
                     ) );
                     if ( $categories && ! is_wp_error( $categories ) ) {
@@ -190,7 +191,7 @@
     </div>
 
     <?php
-    // 动态读取「Shop by Vehicle」下的车型分类，只显示产品库中实际有产品的车型
+    // Read the vehicle categories under "Shop by Vehicle" that actually contain products.
     $rigx_vehicles = array();
     $rigx_parent   = get_term_by( 'slug', 'by-vehicle', 'product_cat' );
     if ( $rigx_parent && ! is_wp_error( $rigx_parent ) ) {
@@ -279,7 +280,7 @@
             });
         }
 
-        // Make selection（车型数据由产品库动态生成）
+        // Make selection (vehicle data is generated from the product catalog)
         function renderMakes() {
             var makeBox = document.getElementById('vm-make-list');
             makeBox.innerHTML = '';
