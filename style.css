@@ -2117,3 +2117,209 @@ textarea.form-control {
     font-weight: 600;
     color: var(--rm-text-primary);
 }
+
+/* ============================================
+   CAMPAIGN ZONE
+   ============================================ */
+.campaign-section {
+    padding: var(--rm-spacing-xl) 0;
+    background-color: var(--rm-gray-50);
+}
+
+.campaign-banner {
+    background: linear-gradient(135deg, #E31937 0%, #B3121D 100%);
+    border-radius: var(--rm-border-radius-lg, 12px);
+    color: #fff;
+    padding: 40px 48px;
+    margin-bottom: var(--rm-spacing-lg);
+}
+
+.campaign-banner-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.campaign-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.campaign-title {
+    font-size: var(--rm-font-3xl);
+    font-weight: 800;
+    margin: 0 0 8px 0;
+}
+
+.campaign-subtitle {
+    font-size: var(--rm-font-base);
+    opacity: 0.92;
+    margin: 0;
+    max-width: 560px;
+}
+
+.campaign-banner .btn-primary {
+    background: #fff;
+    color: #E31937;
+    border: none;
+}
+
+.campaign-banner .btn-primary:hover {
+    background: #f5f5f5;
+    color: #B3121D;
+}
+
+.coupon-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--rm-spacing-md);
+}
+
+.coupon-card {
+    background: #fff;
+    border: 1px dashed var(--rm-primary);
+    border-radius: var(--rm-border-radius);
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+
+.coupon-amount {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--rm-primary);
+    margin-bottom: 8px;
+}
+
+.coupon-code-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.coupon-code {
+    background: var(--rm-gray-100);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+}
+
+.coupon-copy {
+    background: var(--rm-primary);
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.coupon-copy:hover { background: #B3121D; }
+
+.coupon-desc {
+    font-size: 13px;
+    color: var(--rm-text-secondary);
+    margin: 8px 0 0 0;
+}
+
+.campaign-empty {
+    text-align: center;
+    color: var(--rm-text-secondary);
+    padding: 16px 0;
+}
+
+@media (max-width: 768px) {
+    .campaign-banner { padding: 28px 24px; }
+    .coupon-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================
+   WOOCOMMERCE PRODUCT CARDS - EQUAL HEIGHT
+   ============================================ */
+.woocommerce ul.products {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.woocommerce ul.products[class*="columns-2"] { grid-template-columns: repeat(2, 1fr); }
+.woocommerce ul.products[class*="columns-3"] { grid-template-columns: repeat(3, 1fr); }
+
+.woocommerce ul.products li.product {
+    margin: 0 !important;
+    width: auto !important;
+    float: none !important;
+    display: flex;
+}
+
+.woocommerce ul.products li.product .product-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.woocommerce ul.products li.product .product-card-link {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.woocommerce ul.products li.product .product-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.8em;
+    line-height: 1.4;
+    flex: 1;
+    margin: 0 0 8px 0;
+}
+
+.woocommerce ul.products li.product .price {
+    margin: 0;
+}
+
+.woocommerce ul.products li.product .button {
+    margin-top: auto;
+    align-self: stretch;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .woocommerce ul.products,
+    .woocommerce ul.products[class*="columns-3"],
+    .woocommerce ul.products[class*="columns-4"] {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+    .page-template-page-contact .content-area .container > div {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+    }
+}

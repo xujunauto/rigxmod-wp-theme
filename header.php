@@ -127,21 +127,18 @@
                         'depth'          => 1,
                     ) );
                 } else {
-                    // Fallback: list the vehicle categories that actually contain products
-                    $rigx_nav_parent = get_term_by( 'slug', 'by-vehicle', 'product_cat' );
-                    $categories = get_terms( array(
-                        'taxonomy'   => 'product_cat',
-                        'hide_empty' => true,
-                        'parent'     => $rigx_nav_parent ? (int) $rigx_nav_parent->term_id : 0,
-                        'number'     => 8,
-                    ) );
-                    if ( $categories && ! is_wp_error( $categories ) ) {
-                        echo '<ul>';
-                        foreach ( $categories as $cat ) {
-                            echo '<li><a href="' . esc_url( get_term_link( $cat ) ) . '">' . esc_html( $cat->name ) . '</a></li>';
-                        }
-                        echo '</ul>';
-                    }
+                    // Fallback: three main entry points (scales as the model line-up grows)
+                    $rigx_shop_url    = get_permalink( wc_get_page_id( 'shop' ) );
+                    $rigx_about_page  = get_page_by_path( 'about-us' );
+                    $rigx_contact_page = get_page_by_path( 'contact' );
+                    $rigx_about_url   = $rigx_about_page ? get_permalink( $rigx_about_page ) : home_url( '/about-us/' );
+                    $rigx_contact_url = $rigx_contact_page ? get_permalink( $rigx_contact_page ) : home_url( '/contact/' );
+
+                    echo '<ul>';
+                    echo '<li><a href="' . esc_url( $rigx_shop_url ) . '">' . esc_html__( 'Products', 'rigxmod-autozone' ) . '</a></li>';
+                    echo '<li><a href="' . esc_url( $rigx_about_url ) . '">' . esc_html__( 'About Us', 'rigxmod-autozone' ) . '</a></li>';
+                    echo '<li><a href="' . esc_url( $rigx_contact_url ) . '">' . esc_html__( 'Contact', 'rigxmod-autozone' ) . '</a></li>';
+                    echo '</ul>';
                 }
                 ?>
             </div>

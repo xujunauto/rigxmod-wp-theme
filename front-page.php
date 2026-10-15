@@ -18,104 +18,109 @@ get_header();
                 <div class="container">
                     <div class="hero-banner-content">
                         <h1><?php echo esc_html( get_theme_mod( 'rigxmod_hero_title', 'CONQUER ANY TERRAIN' ) ); ?></h1>
-                        <p><?php echo esc_html( get_theme_mod( 'rigxmod_hero_subtitle', 'Premium off-road upgrades for GWM TANK, Jetour & BYD Formula Leopard. Aerospace-grade aluminum parts, engineered for extreme conditions.' ) ); ?></p>
+                        <p><?php echo esc_html( get_theme_mod( 'rigxmod_hero_subtitle', 'Premium off-road upgrades for Jetour T1, T2 and Zongheng G700. Aerospace-grade aluminum parts, engineered for extreme conditions.' ) ); ?></p>
                         <a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'shop' ) ) ); ?>" class="btn btn-primary btn-lg">
                             <?php esc_html_e( 'Shop Now', 'rigxmod-autozone' ); ?>
                         </a>
                     </div>
                 </div>
-                <div class="hero-banner-image" style="background-image: url('<?php echo esc_url( get_theme_mod( 'rigxmod_hero_image', '' ) ); ?>');"></div>
+                <?php $hero_img = get_theme_mod( 'rigxmod_hero_image', '' ); ?>
+                <?php if ( $hero_img ) : ?>
+                    <div class="hero-banner-image" style="background-image: url('<?php echo esc_url( $hero_img ); ?>');"></div>
+                <?php endif; ?>
             </div>
         </section>
 
-        <!-- Quick Category Access -->
-        <section class="category-quick-access">
-            <div class="container">
-                <h2 class="section-title"><?php esc_html_e( 'Shop by Category', 'rigxmod-autozone' ); ?></h2>
-                <div class="category-grid">
-                    <?php
-                    $cat_args = array(
-                        'taxonomy'   => 'product_cat',
-                        'hide_empty' => true,
-                        'parent'     => 0,
-                        'number'     => 6,
-                    );
-                    $categories = get_terms( $cat_args );
-
-                    if ( $categories && ! is_wp_error( $categories ) ) {
-                        $icons = array(
-                            'fa-car-side',
-                            'fa-bolt',
-                            'fa-sun',
-                            'fa-road',
-                            'fa-shield-halved',
-                            'fa-gear',
-                        );
-
-                        $i = 0;
-                        foreach ( $categories as $cat ) {
-                            $icon = isset( $icons[ $i ] ) ? $icons[ $i ] : 'fa-cog';
-                            echo '<a href="' . esc_url( get_term_link( $cat ) ) . '" class="category-card">';
-                            echo '<div class="category-card-icon"><i class="fas ' . esc_attr( $icon ) . '"></i></div>';
-                            echo '<h3>' . esc_html( $cat->name ) . '</h3>';
-                            echo '</a>';
-                            $i++;
-                        }
-                    }
-                    ?>
-                </div>
-            </div>
-        </section>
-
-        <!-- Promo Banners -->
-        <section class="promo-section">
-            <div class="container">
-                <div class="promo-grid">
-                    <div class="promo-banner promo-banner-red">
-                        <div class="promo-banner-content">
-                            <h3><?php esc_html_e( 'TANK 300 UPGRADES', 'rigxmod-autozone' ); ?></h3>
-                            <p><?php esc_html_e( 'Complete bolt-on performance kits. Free shipping worldwide.', 'rigxmod-autozone' ); ?></p>
-                            <a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'shop' ) ) ); ?>" class="btn">
-                                <?php esc_html_e( 'Shop Now', 'rigxmod-autozone' ); ?>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="promo-banner promo-banner-orange">
-                        <div class="promo-banner-content">
-                            <h3 style="font-size: 20px;"><?php esc_html_e( 'NEW ARRIVALS', 'rigxmod-autozone' ); ?></h3>
-                            <p style="font-size: 13px;"><?php esc_html_e( 'Jetour T2 accessories just dropped', 'rigxmod-autozone' ); ?></p>
-                            <a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'shop' ) ) ); ?>" class="btn">
-                                <?php esc_html_e( 'View', 'rigxmod-autozone' ); ?>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="promo-banner promo-banner-gray">
-                        <div class="promo-banner-content">
-                            <h3 style="font-size: 20px;"><?php esc_html_e( 'BEST SELLERS', 'rigxmod-autozone' ); ?></h3>
-                            <p style="font-size: 13px;"><?php esc_html_e( 'Fan favorites, proven on trails', 'rigxmod-autozone' ); ?></p>
-                            <a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'shop' ) ) ); ?>" class="btn">
-                                <?php esc_html_e( 'Explore', 'rigxmod-autozone' ); ?>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Featured Products -->
+        <!-- Best Sellers -->
         <section class="products-section">
             <div class="container">
-                <h2 class="section-title"><?php esc_html_e( 'Featured Products', 'rigxmod-autozone' ); ?></h2>
+                <h2 class="section-title"><?php esc_html_e( 'Best Sellers', 'rigxmod-autozone' ); ?></h2>
                 <?php
-                echo do_shortcode( '[products limit="8" columns="4" visibility="featured" orderby="date" order="DESC"]' );
+                echo do_shortcode( '[products limit="8" columns="4" orderby="popularity" order="DESC"]' );
                 ?>
+            </div>
+        </section>
+
+        <!-- Campaign Zone -->
+        <section class="campaign-section">
+            <div class="container">
+                <div class="campaign-banner">
+                    <div class="campaign-banner-inner">
+                        <div>
+                            <span class="campaign-tag"><?php esc_html_e( 'Campaign', 'rigxmod-autozone' ); ?></span>
+                            <h2 class="campaign-title"><?php echo esc_html( get_theme_mod( 'rigxmod_campaign_name', 'Limited-Time Offer' ) ); ?></h2>
+                            <p class="campaign-subtitle"><?php echo esc_html( get_theme_mod( 'rigxmod_campaign_subtitle', 'Grab exclusive coupon codes and enjoy campaign prices on selected products.' ) ); ?></p>
+                        </div>
+                        <a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'shop' ) ) ); ?>" class="btn btn-primary">
+                            <?php esc_html_e( 'Shop Campaign', 'rigxmod-autozone' ); ?>
+                        </a>
+                    </div>
+                </div>
+
+                <?php
+                $coupons = get_posts( array(
+                    'post_type'      => 'shop_coupon',
+                    'post_status'    => 'publish',
+                    'posts_per_page' => 6,
+                ) );
+
+                if ( $coupons ) :
+                    ?>
+                    <div class="coupon-grid">
+                        <?php foreach ( $coupons as $coupon_post ) :
+                            $coupon = new WC_Coupon( $coupon_post->ID );
+                            $code   = $coupon->get_code();
+                            $type   = $coupon->get_discount_type();
+                            $amount = $coupon->get_amount();
+                            $desc   = $coupon->get_description();
+                            if ( 'percent' === $type ) {
+                                $discount = $amount . '%';
+                            } elseif ( 'fixed_cart' === $type || 'fixed_product' === $type ) {
+                                $discount = '$' . $amount;
+                            } else {
+                                $discount = $amount;
+                            }
+                            ?>
+                            <div class="coupon-card">
+                                <div class="coupon-amount"><?php echo esc_html( $discount ); ?></div>
+                                <div class="coupon-code-row">
+                                    <code class="coupon-code"><?php echo esc_html( $code ); ?></code>
+                                    <button type="button" class="coupon-copy" data-code="<?php echo esc_attr( $code ); ?>"><?php esc_html_e( 'Copy', 'rigxmod-autozone' ); ?></button>
+                                </div>
+                                <?php if ( $desc ) : ?>
+                                    <p class="coupon-desc"><?php echo esc_html( $desc ); ?></p>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <script>
+                    document.querySelectorAll('.coupon-copy').forEach(function(btn){
+                        btn.addEventListener('click', function(){
+                            var code = btn.getAttribute('data-code');
+                            if (navigator.clipboard) {
+                                navigator.clipboard.writeText(code).then(function(){
+                                    btn.textContent = '<?php echo esc_js( __( 'Copied!', 'rigxmod-autozone' ) ); ?>';
+                                    setTimeout(function(){ btn.textContent = '<?php echo esc_js( __( 'Copy', 'rigxmod-autozone' ) ); ?>'; }, 1500);
+                                });
+                            } else {
+                                var ta = document.createElement('textarea');
+                                ta.value = code; document.body.appendChild(ta); ta.select();
+                                try { document.execCommand('copy'); btn.textContent = '<?php echo esc_js( __( 'Copied!', 'rigxmod-autozone' ) ); ?>'; setTimeout(function(){ btn.textContent = '<?php echo esc_js( __( 'Copy', 'rigxmod-autozone' ) ); ?>'; }, 1500); } catch(e){}
+                                document.body.removeChild(ta);
+                            }
+                        });
+                    });
+                    </script>
+                <?php else : ?>
+                    <p class="campaign-empty"><?php esc_html_e( 'No active coupons right now. New campaigns are coming soon — stay tuned!', 'rigxmod-autozone' ); ?></p>
+                <?php endif; ?>
             </div>
         </section>
 
         <!-- Latest News -->
         <section class="news-section">
             <div class="container">
-                <h2 class="section-title"><?php esc_html_e( 'Latest News & Guides', 'rigxmod-autozone' ); ?></h2>
+                <h2 class="section-title"><?php esc_html_e( 'News & Insights', 'rigxmod-autozone' ); ?></h2>
                 <div class="news-grid">
                     <?php
                     $news_args = array(
@@ -155,6 +160,8 @@ get_header();
                             <?php
                         }
                         wp_reset_postdata();
+                    } else {
+                        echo '<p>' . esc_html__( 'Articles are on the way. Check back soon for brand stories, company news and off-road guides.', 'rigxmod-autozone' ) . '</p>';
                     }
                     ?>
                 </div>

@@ -45,7 +45,7 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
                             RIGX <span>MOD</span>
                         </div>
                         <p>
-                            <?php esc_html_e( 'Precision-engineered off-road upgrade parts for GWM TANK, Jetour & BYD Formula Leopard. Aerospace-grade aluminum. Bolt-on installation. Worldwide shipping.', 'rigxmod-autozone' ); ?>
+                            <?php esc_html_e( 'Precision-engineered off-road upgrade parts for Jetour T1, T2 and Zongheng G700. Aerospace-grade aluminum. Bolt-on installation. Worldwide shipping.', 'rigxmod-autozone' ); ?>
                         </p>
                         <div class="footer-contact-item">
                             <i class="fas fa-envelope"></i>
@@ -81,10 +81,12 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
                     <div class="footer-col">
                         <h4><?php esc_html_e( 'Products', 'rigxmod-autozone' ); ?></h4>
                         <?php
+                        // Show only the vehicle categories that actually contain products.
+                        $footer_parent = get_term_by( 'slug', 'by-vehicle', 'product_cat' );
                         $footer_cats = get_terms( array(
                             'taxonomy'   => 'product_cat',
                             'hide_empty' => true,
-                            'parent'     => 0,
+                            'parent'     => $footer_parent ? (int) $footer_parent->term_id : 0,
                             'number'     => 8,
                         ) );
                         if ( $footer_cats && ! is_wp_error( $footer_cats ) ) {

@@ -42,10 +42,45 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
             );
             update_option( 'rigxmod_contact_messages', $messages );
 
-            // Attempt email notification
+            // Email notification
             $mail_subject = '[Contact] ' . ( $cf_subject ? $cf_subject : __( 'New inquiry from ', 'rigxmod-autozone' ) . $cf_name );
             $mail_body    = "Name: $cf_name\nEmail: $cf_email\nSubject: $cf_subject\n\nMessage:\n$cf_msg\n\nDate: " . current_time( 'mysql' );
             wp_mail( 'sales@rigxmod.com', $mail_subject, $mail_body, "From: $cf_name <$cf_email>" );
+
+            // Push to Feishu group bot if webhook is configured
+            $feishu_webhook = get_option( 'rigxmod_feishu_webhook', '' );
+            if ( $feishu_webhook ) {
+                $feishu_payload = array(
+                    'msg_type' => 'interactive',
+                    'card'     => array(
+                        'config' => array( 'wide_screen_mode' => true ),
+                        'header' => array(
+                            'title' => array( 'tag' => 'plain_text', 'content' => '🔔 New Inquiry - ' . $cf_name ),
+                            'template' => 'red',
+                        ),
+                        'elements' => array(
+                            array(
+                                'tag'  => 'div',
+                                'text' => array(
+                                    'tag'     => 'lark_md',
+                                    'content' => "**Name:** $cf_name\n**Email:** $cf_email\n**Subject:** " . ( $cf_subject ?: '(no subject)' ) . "\n**Message:**\n$cf_msg",
+                                ),
+                            ),
+                            array(
+                                'tag'  => 'note',
+                                'elements' => array(
+                                    array( 'tag' => 'plain_text', 'content' => 'Source: rigxmod.com Contact Us | ' . current_time( 'mysql' ) ),
+                                ),
+                            ),
+                        ),
+                    ),
+                );
+                wp_remote_post( $feishu_webhook, array(
+                    'headers' => array( 'Content-Type' => 'application/json' ),
+                    'body'    => wp_json_encode( $feishu_payload ),
+                    'timeout' => 15,
+                ) );
+            }
 
             $cf_message = __( 'Thank you! Your message has been sent. We will get back to you within 24 hours.', 'rigxmod-autozone' );
             $cf_type    = 'success';
@@ -78,17 +113,29 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
                     <div style="margin-top:32px;padding:24px;background:#f8f8f8;border-radius:8px;">
                         <h3 style="font-size:18px;margin-bottom:20px;color:#222;"><?php esc_html_e( 'Get in Touch', 'rigxmod-autozone' ); ?></h3>
 
-                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-                            <div style="width:40px;height:40px;background:#E31937;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i class="fas fa-envelope" style="color:#fff;font-size:16px;"></i>
-                            </div>
-                            <div>
-                                <div style="font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.05em;"><?php esc_html_e( 'Email', 'rigxmod-autozone' ); ?></div>
-                                <a href="mailto:sales@rigxmod.com" style="color:#222;font-size:14px;">sales@rigxmod.com</a>
+                        <!-- Emails -->
+                        <div style="margin-bottom:18px;">
+                            <div style="font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;"><?php esc_html_e( 'Email', 'rigxmod-autozone' ); ?></div>
+                            <div style="display:flex;flex-direction:column;gap:6px;">
+                                <a href="mailto:info@rigxmod.com" style="color:#222;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-envelope" style="color:#E31937;width:18px;"></i> info@rigxmod.com <span style="color:#999;font-size:12px;">— <?php esc_html_e( 'General Service', 'rigxmod-autozone' ); ?></span></a>
+                                <a href="mailto:sales@rigxmod.com" style="color:#222;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-envelope" style="color:#E31937;width:18px;"></i> sales@rigxmod.com <span style="color:#999;font-size:12px;">— <?php esc_html_e( 'Sales Inquiry', 'rigxmod-autozone' ); ?></span></a>
+                                <a href="mailto:engineering@rigxmod.com" style="color:#222;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-envelope" style="color:#E31937;width:18px;"></i> engineering@rigxmod.com <span style="color:#999;font-size:12px;">— <?php esc_html_e( 'Technical Support', 'rigxmod-autozone' ); ?></span></a>
                             </div>
                         </div>
 
-                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                        <!-- Phone -->
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                            <div style="width:40px;height:40px;background:#1a73e8;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fas fa-phone" style="color:#fff;font-size:16px;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.05em;"><?php esc_html_e( 'Phone', 'rigxmod-autozone' ); ?></div>
+                                <a href="tel:+8619157298808" style="color:#222;font-size:14px;">+86 191 5729 8808</a>
+                            </div>
+                        </div>
+
+                        <!-- WhatsApp -->
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
                             <div style="width:40px;height:40px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                 <i class="fab fa-whatsapp" style="color:#fff;font-size:16px;"></i>
                             </div>
@@ -98,13 +145,38 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
                             </div>
                         </div>
 
-                        <div style="display:flex;align-items:center;gap:12px;">
+                        <!-- WeChat -->
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                            <div style="width:40px;height:40px;background:#07C160;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fab fa-weixin" style="color:#fff;font-size:16px;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.05em;"><?php esc_html_e( 'WeChat', 'rigxmod-autozone' ); ?></div>
+                                <span style="color:#222;font-size:14px;">+86 191 5729 8808</span>
+                            </div>
+                        </div>
+
+                        <!-- Business Hours -->
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
                             <div style="width:40px;height:40px;background:#F38020;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                                 <i class="fas fa-clock" style="color:#fff;font-size:16px;"></i>
                             </div>
                             <div>
                                 <div style="font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.05em;"><?php esc_html_e( 'Business Hours', 'rigxmod-autozone' ); ?></div>
                                 <span style="color:#222;font-size:14px;"><?php esc_html_e( 'Mon-Fri 9:00 - 18:00 (GMT+8)', 'rigxmod-autozone' ); ?></span>
+                            </div>
+                        </div>
+
+                        <!-- Social Media -->
+                        <div>
+                            <div style="font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;"><?php esc_html_e( 'Follow Us', 'rigxmod-autozone' ); ?></div>
+                            <div style="display:flex;gap:10px;">
+                                <a href="https://www.instagram.com/rigxmod" target="_blank" rel="noopener" style="width:38px;height:38px;border-radius:50%;background:#E31937;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:16px;"><i class="fab fa-instagram"></i></a>
+                                <a href="https://www.youtube.com/@rigxmod" target="_blank" rel="noopener" style="width:38px;height:38px;border-radius:50%;background:#FF0000;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:16px;"><i class="fab fa-youtube"></i></a>
+                                <a href="https://www.tiktok.com/@rigxmod" target="_blank" rel="noopener" style="width:38px;height:38px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:16px;"><i class="fab fa-tiktok"></i></a>
+                                <a href="https://www.facebook.com/rigxmod" target="_blank" rel="noopener" style="width:38px;height:38px;border-radius:50%;background:#1877F2;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:16px;"><i class="fab fa-facebook-f"></i></a>
+                                <a href="https://x.com/rigxmod" target="_blank" rel="noopener" style="width:38px;height:38px;border-radius:50%;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:16px;"><i class="fab fa-x-twitter"></i></a>
+                                <a href="https://wa.me/8619157298808" target="_blank" rel="noopener" style="width:38px;height:38px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:16px;"><i class="fab fa-whatsapp"></i></a>
                             </div>
                         </div>
                     </div>

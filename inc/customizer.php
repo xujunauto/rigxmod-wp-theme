@@ -49,7 +49,7 @@ function rigxmod_customize_register( $wp_customize ) {
     ) );
 
     $wp_customize->add_setting( 'rigxmod_hero_subtitle', array(
-        'default'           => __( 'Premium off-road upgrades for GWM TANK, Jetour & BYD Formula Leopard. Aerospace-grade aluminum parts, engineered for extreme conditions.', 'rigxmod-autozone' ),
+        'default'           => __( 'Premium off-road upgrades for Jetour T1, T2 and Zongheng G700. Aerospace-grade aluminum parts, engineered for extreme conditions.', 'rigxmod-autozone' ),
         'sanitize_callback' => 'sanitize_textarea_field',
     ) );
 
@@ -68,6 +68,34 @@ function rigxmod_customize_register( $wp_customize ) {
         'label'   => __( 'Hero Background Image', 'rigxmod-autozone' ),
         'section' => 'rigxmod_hero_section',
     ) ) );
+
+    // Campaign Section
+    $wp_customize->add_section( 'rigxmod_campaign_section', array(
+        'title'    => __( 'Campaign Zone', 'rigxmod-autozone' ),
+        'priority' => 33,
+    ) );
+
+    $wp_customize->add_setting( 'rigxmod_campaign_name', array(
+        'default'           => __( 'Limited-Time Offer', 'rigxmod-autozone' ),
+        'sanitize_callback' => 'sanitize_text_field',
+    ) );
+
+    $wp_customize->add_control( 'rigxmod_campaign_name', array(
+        'label'   => __( 'Campaign Name (e.g. Procurement Festival, Black Friday)', 'rigxmod-autozone' ),
+        'section' => 'rigxmod_campaign_section',
+        'type'    => 'text',
+    ) );
+
+    $wp_customize->add_setting( 'rigxmod_campaign_subtitle', array(
+        'default'           => __( 'Grab exclusive coupon codes and enjoy campaign prices on selected products.', 'rigxmod-autozone' ),
+        'sanitize_callback' => 'sanitize_textarea_field',
+    ) );
+
+    $wp_customize->add_control( 'rigxmod_campaign_subtitle', array(
+        'label'   => __( 'Campaign Subtitle', 'rigxmod-autozone' ),
+        'section' => 'rigxmod_campaign_section',
+        'type'    => 'textarea',
+    ) );
 
     // Colors Section
     $wp_customize->add_section( 'rigxmod_colors_section', array(
