@@ -175,11 +175,7 @@
 
             <div id="vm-step-make">
                 <div class="vm-step-label"><?php esc_html_e( '1. Select Make', 'rigxmod-autozone' ); ?></div>
-                <div class="vm-grid">
-                    <div class="vm-card" data-make="gwm"><i class="fas fa-truck-pickup"></i><strong>GWM TANK</strong></div>
-                    <div class="vm-card" data-make="jetour"><i class="fas fa-truck-pickup"></i><strong>Jetour</strong></div>
-                    <div class="vm-card" data-make="byd"><i class="fas fa-truck-pickup"></i><strong>BYD</strong></div>
-                </div>
+                <div class="vm-grid" id="vm-make-list"></div>
             </div>
 
             <div id="vm-step-model" style="display:none;margin-top:20px;">
@@ -193,13 +189,41 @@
         </div>
     </div>
 
+    <?php
+    // 动态读取「Shop by Vehicle」下的车型分类，只显示产品库中实际有产品的车型
+    $rigx_vehicles = array();
+    $rigx_parent   = get_term_by( 'slug', 'by-vehicle', 'product_cat' );
+    if ( $rigx_parent && ! is_wp_error( $rigx_parent ) ) {
+        $rigx_terms = get_terms( array(
+            'taxonomy'   => 'product_cat',
+            'parent'     => (int) $rigx_parent->term_id,
+            'hide_empty' => true,
+            'orderby'    => 'name',
+            'order'      => 'ASC',
+        ) );
+        if ( ! is_wp_error( $rigx_terms ) ) {
+            foreach ( $rigx_terms as $rigx_term ) {
+                $rigx_link = get_term_link( $rigx_term );
+                if ( is_wp_error( $rigx_link ) ) {
+                    continue;
+                }
+                $rigx_parts = preg_split( '/\s+/', trim( $rigx_term->name ), 2 );
+                $rigx_brand = isset( $rigx_parts[0] ) ? $rigx_parts[0] : $rigx_term->name;
+                $rigx_key   = sanitize_title( $rigx_brand );
+                if ( ! isset( $rigx_vehicles[ $rigx_key ] ) ) {
+                    $rigx_vehicles[ $rigx_key ] = array( 'name' => $rigx_brand, 'models' => array() );
+                }
+                $rigx_vehicles[ $rigx_key ]['models'][] = array(
+                    'name' => $rigx_term->name,
+                    'url'  => $rigx_link,
+                );
+            }
+        }
+    }
+    ?>
     <script>
     (function () {
-        var VEHICLES = {
-            gwm:    { name: 'GWM',    models: [ { name: 'TANK 300', query: 'TANK 300' } ] },
-            jetour: { name: 'Jetour', models: [ { name: 'T2', query: 'Jetour T2' } ] },
-            byd:    { name: 'BYD',    models: [ { name: 'Formula Leopard 5', query: 'Formula Leopard 5' } ] }
-        };
+        var VEHICLES = <?php echo wp_json_encode( $rigx_vehicles ); ?>;
         var HOME_URL = '<?php echo esc_js( home_url( '/' ) ); ?>';
         var STORE_KEY = 'rigxmod_vehicle';
 
@@ -255,37 +279,47 @@
             });
         }
 
-        // Make selection
-        Array.prototype.forEach.call(stepMake.querySelectorAll('.vm-card'), function (card) {
-            card.addEventListener('click', function () {
-                Array.prototype.forEach.call(stepMake.querySelectorAll('.vm-card'), function (c) {
-                    c.classList.remove('selected');
-                });
-                card.classList.add('selected');
-                selectedMake = card.getAttribute('data-make');
-                selectedModel = null;
-
-                // Render models for chosen make
-                modelList.innerHTML = '';
-                VEHICLES[selectedMake].models.forEach(function (m) {
-                    var div = document.createElement('div');
-                    div.className = 'vm-card';
-                    div.innerHTML = '<i class="fas fa-car"></i><strong>' + m.name + '</strong>';
-                    div.addEventListener('click', function () {
-                        Array.prototype.forEach.call(modelList.querySelectorAll('.vm-card'), function (c) {
-                            c.classList.remove('selected');
-                        });
-                        div.classList.add('selected');
-                        selectedModel = m;
-                        btnConfirm.disabled = false;
+        // Make selection（车型数据由产品库动态生成）
+        function renderMakes() {
+            var makeBox = document.getElementById('vm-make-list');
+            makeBox.innerHTML = '';
+            Object.keys(VEHICLES).forEach(function (makeKey) {
+                var make = VEHICLES[makeKey];
+                var card = document.createElement('div');
+                card.className = 'vm-card';
+                card.setAttribute('data-make', makeKey);
+                card.innerHTML = '<i class="fas fa-truck-pickup"></i><strong>' + make.name + '</strong>';
+                card.addEventListener('click', function () {
+                    Array.prototype.forEach.call(makeBox.querySelectorAll('.vm-card'), function (c) {
+                        c.classList.remove('selected');
                     });
-                    modelList.appendChild(div);
-                });
+                    card.classList.add('selected');
+                    selectedMake = makeKey;
+                    selectedModel = null;
 
-                stepModel.style.display = 'block';
-                btnConfirm.disabled = true;
+                    // Render models for chosen make
+                    modelList.innerHTML = '';
+                    VEHICLES[selectedMake].models.forEach(function (m) {
+                        var div = document.createElement('div');
+                        div.className = 'vm-card';
+                        div.innerHTML = '<i class="fas fa-car"></i><strong>' + m.name + '</strong>';
+                        div.addEventListener('click', function () {
+                            Array.prototype.forEach.call(modelList.querySelectorAll('.vm-card'), function (c) {
+                                c.classList.remove('selected');
+                            });
+                            div.classList.add('selected');
+                            selectedModel = m;
+                            btnConfirm.disabled = false;
+                        });
+                        modelList.appendChild(div);
+                    });
+
+                    stepModel.style.display = 'block';
+                    btnConfirm.disabled = true;
+                });
+                makeBox.appendChild(card);
             });
-        });
+        }
 
         btnBack.addEventListener('click', function () {
             stepModel.style.display = 'none';
@@ -302,7 +336,7 @@
             localStorage.setItem(STORE_KEY, JSON.stringify({ make: selectedMake, model: selectedModel.name }));
             renderHeader();
             modal.style.display = 'none';
-            window.location.href = HOME_URL + '?s=' + encodeURIComponent(selectedModel.query) + '&post_type=product';
+            window.location.href = selectedModel.url;
         });
 
         btnClear.addEventListener('click', function () {
@@ -313,6 +347,7 @@
         });
 
         // Init + re-init every time modal opens
+        renderMakes();
         renderHeader();
         document.querySelector('.header-vehicle-selector').addEventListener('click', function () {
             resetSteps();

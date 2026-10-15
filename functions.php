@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Theme version
-define( 'RIGXMOD_VERSION', '1.0.2' );
+define( 'RIGXMOD_VERSION', '1.0.3' );
 define( 'RIGXMOD_DIR', get_template_directory() );
 define( 'RIGXMOD_URI', get_template_directory_uri() );
 
@@ -225,3 +225,26 @@ add_filter( 'woocommerce_output_related_products_args', 'rigxmod_related_product
  * Remove WooCommerce sidebar (we use our own layout).
  */
 remove_action( 'woocommerce_sidebar', 'woocommerce_get_sidebar', 10 );
+
+/**
+ * DDU (Delivered Duty Unpaid) notice for the WooCommerce Blocks checkout.
+ * Duties, taxes and customs clearance charges are the buyer's responsibility.
+ * Written in English; other languages are served automatically by GTranslate.
+ */
+function rigxmod_ddu_notice_html() {
+    return '<div class="rigxmod-ddu-notice" style="background:#fdf0f1;border:1px solid #E31937;border-left:4px solid #E31937;border-radius:4px;padding:12px 14px;margin:0 0 20px;font-size:13px;line-height:1.6;color:#333;">'
+        . '<strong style="color:#B3121D;">' . esc_html__( 'Important - Customs, Duties and Taxes (DDU):', 'rigxmod-autozone' ) . '</strong> '
+        . esc_html__( 'All prices, shipping fees and order totals shown exclude import duties, taxes and customs clearance charges levied by the destination country. These charges are the buyer\'s responsibility and must be paid directly to the customs authority or the carrier. We ship DDU (Delivered Duty Unpaid). Please check with your local customs office before placing your order.', 'rigxmod-autozone' )
+        . '</div>';
+}
+
+function rigxmod_ddu_notice_block( $block_content, $block ) {
+    if ( is_admin() ) {
+        return $block_content;
+    }
+    if ( isset( $block['blockName'] ) && 'woocommerce/checkout' === $block['blockName'] ) {
+        return rigxmod_ddu_notice_html() . $block_content;
+    }
+    return $block_content;
+}
+add_filter( 'render_block', 'rigxmod_ddu_notice_block', 10, 2 );
