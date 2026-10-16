@@ -12,9 +12,21 @@ get_header();
 
     <main id="main" class="site-main">
 
-        <!-- Hero Banner -->
+        <!-- Hero Banner — full-width slider -->
         <section class="hero-section">
-            <div class="hero-banner">
+            <?php
+            $rigxmod_hero_slides = array_filter( array(
+                get_theme_mod( 'rigxmod_hero_image', '' ),
+                get_theme_mod( 'rigxmod_hero_image_2', '' ),
+                get_theme_mod( 'rigxmod_hero_image_3', '' ),
+            ) );
+            $rigxmod_hero_slides = array_values( $rigxmod_hero_slides );
+            ?>
+            <div class="hero-slider" id="rigxmod-hero-slider">
+                <?php foreach ( $rigxmod_hero_slides as $rigxmod_i => $rigxmod_img ) : ?>
+                    <div class="hero-slide<?php echo 0 === $rigxmod_i ? ' is-active' : ''; ?>" style="background-image: url('<?php echo esc_url( $rigxmod_img ); ?>');"></div>
+                <?php endforeach; ?>
+                <div class="hero-slider-overlay"></div>
                 <div class="container">
                     <div class="hero-banner-content">
                         <h1><?php echo esc_html( get_theme_mod( 'rigxmod_hero_title', 'CONQUER ANY TERRAIN' ) ); ?></h1>
@@ -24,11 +36,46 @@ get_header();
                         </a>
                     </div>
                 </div>
-                <?php $hero_img = get_theme_mod( 'rigxmod_hero_image', '' ); ?>
-                <?php if ( $hero_img ) : ?>
-                    <div class="hero-banner-image" style="background-image: url('<?php echo esc_url( $hero_img ); ?>');"></div>
+                <?php if ( count( $rigxmod_hero_slides ) > 1 ) : ?>
+                    <button type="button" class="hero-slider-arrow hero-slider-prev" aria-label="Previous slide">&#8249;</button>
+                    <button type="button" class="hero-slider-arrow hero-slider-next" aria-label="Next slide">&#8250;</button>
+                    <div class="hero-slider-dots">
+                        <?php foreach ( $rigxmod_hero_slides as $rigxmod_i => $rigxmod_img ) : ?>
+                            <button type="button" class="hero-slider-dot<?php echo 0 === $rigxmod_i ? ' is-active' : ''; ?>" data-slide="<?php echo esc_attr( $rigxmod_i ); ?>" aria-label="<?php echo esc_attr( sprintf( 'Slide %d', $rigxmod_i + 1 ) ); ?>"></button>
+                        <?php endforeach; ?>
+                    </div>
                 <?php endif; ?>
             </div>
+            <?php if ( count( $rigxmod_hero_slides ) > 1 ) : ?>
+            <script>
+            (function () {
+                var slider = document.getElementById('rigxmod-hero-slider');
+                if (!slider) return;
+                var slides = slider.querySelectorAll('.hero-slide');
+                var dots = slider.querySelectorAll('.hero-slider-dot');
+                var prev = slider.querySelector('.hero-slider-prev');
+                var next = slider.querySelector('.hero-slider-next');
+                var current = 0, timer = null;
+                function go(n) {
+                    slides[current].classList.remove('is-active');
+                    if (dots.length) dots[current].classList.remove('is-active');
+                    current = (n + slides.length) % slides.length;
+                    slides[current].classList.add('is-active');
+                    if (dots.length) dots[current].classList.add('is-active');
+                }
+                function start() { timer = setInterval(function () { go(current + 1); }, 6000); }
+                function stop() { if (timer) { clearInterval(timer); timer = null; } }
+                if (prev) prev.addEventListener('click', function () { stop(); go(current - 1); start(); });
+                if (next) next.addEventListener('click', function () { stop(); go(current + 1); start(); });
+                dots.forEach(function (dot) {
+                    dot.addEventListener('click', function () { stop(); go(parseInt(this.getAttribute('data-slide'), 10)); start(); });
+                });
+                slider.addEventListener('mouseenter', stop);
+                slider.addEventListener('mouseleave', function () { if (!timer) start(); });
+                start();
+            })();
+            </script>
+            <?php endif; ?>
         </section>
 
         <!-- Best Sellers -->

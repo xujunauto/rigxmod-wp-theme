@@ -2948,3 +2948,132 @@ details.rm-faq-item[open] summary::after {
         font-size: 21px;
     }
 }
+
+/* ============================================================
+   Hero full-width slider (Tesla-inspired, v1.3)
+   Appended only: no existing selectors modified.
+   ============================================================ */
+.hero-slider {
+    position: relative;
+    height: 480px;
+    overflow: hidden;
+    background: #0d0f12;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.9s ease;
+    pointer-events: none;
+}
+
+.hero-slide.is-active {
+    opacity: 1;
+}
+
+/* Soft scrim so white text stays readable on any slide */
+.hero-slider-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.28) 45%, rgba(0, 0, 0, 0) 75%);
+    pointer-events: none;
+}
+
+.hero-slider > .container {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.hero-slider .hero-banner-content h1 {
+    color: #ffffff;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
+}
+
+.hero-slider .hero-banner-content p {
+    color: rgba(255, 255, 255, 0.88);
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Arrows */
+.hero-slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 0 0 3px;
+}
+
+.hero-slider-arrow:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.hero-slider-prev {
+    left: 22px;
+}
+
+.hero-slider-next {
+    right: 22px;
+}
+
+/* Dots */
+.hero-slider-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    gap: 10px;
+}
+
+.hero-slider-dot {
+    width: 26px;
+    height: 3px;
+    border: none;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.hero-slider-dot.is-active {
+    background: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .hero-slider {
+        height: 340px;
+    }
+
+    .hero-slider-overlay {
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.35) 60%, rgba(0, 0, 0, 0.12) 100%);
+    }
+
+    .hero-slider-arrow {
+        display: none;
+    }
+}
