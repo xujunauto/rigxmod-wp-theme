@@ -106,9 +106,10 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
                             <li><a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ); ?>"><?php esc_html_e( 'My Account', 'rigxmod-autozone' ); ?></a></li>
                             <li><a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'cart' ) ) ); ?>"><?php esc_html_e( 'Shopping Cart', 'rigxmod-autozone' ); ?></a></li>
                             <li><a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'checkout' ) ) ); ?>"><?php esc_html_e( 'Checkout', 'rigxmod-autozone' ); ?></a></li>
-                            <li><a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'shop' ) ) ); ?>"><?php esc_html_e( 'Track Order', 'rigxmod-autozone' ); ?></a></li>
+                            <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'track-order' ) ) ?: '#' ); ?>"><?php esc_html_e( 'Track Order', 'rigxmod-autozone' ); ?></a></li>
                             <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'contact' ) ) ?: '#' ); ?>"><?php esc_html_e( 'Contact Us', 'rigxmod-autozone' ); ?></a></li>
                             <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'faqs' ) ) ?: '#' ); ?>"><?php esc_html_e( 'FAQs', 'rigxmod-autozone' ); ?></a></li>
+                            <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'blog' ) ) ?: '#' ); ?>"><?php esc_html_e( 'Blog', 'rigxmod-autozone' ); ?></a></li>
                         </ul>
                     </div>
 

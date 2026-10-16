@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * The header for our theme
  *
@@ -40,6 +40,16 @@
                         <?php endif; ?>
                     </a>
                 </div>
+
+                <!-- Mobile hamburger -->
+                <button type="button" class="header-mobile-toggle" id="rigx-mobile-toggle" aria-label="Menu" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+
+                <!-- Mobile hamburger -->
+                <button type="button" class="header-mobile-toggle" id="rigx-mobile-toggle" aria-label="Menu" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
 
                 <!-- Vehicle Selector (for off-road parts - "Add Your Vehicle" style) -->
                 <div class="header-vehicle-selector" onclick="document.getElementById('vehicle-modal').style.display='flex'">
@@ -354,4 +364,24 @@
     })();
     </script>
 
+    <script>
+    // Mobile hamburger: toggle header nav + search drawer
+    (function(){
+        var btn = document.getElementById('rigx-mobile-toggle');
+        if (!btn) return;
+        var nav = document.querySelector('.header-cat-nav');
+        var search = document.querySelector('.header-search');
+        btn.addEventListener('click', function(){
+            var isOpen = nav.classList.toggle('is-open');
+            if (search) {
+                if (isOpen) { search.classList.add('is-open'); }
+                else { search.classList.remove('is-open'); }
+            }
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+    })();
+    </script>
+
     <div id="content" class="site-content">
+
+

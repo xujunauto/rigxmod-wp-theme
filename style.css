@@ -3074,3 +3074,227 @@ details.rm-faq-item[open] summary::after {
         display: none;
     }
 }
+
+/* ============================================================
+   CART + CHECKOUT — center, widen (v1.4, appended only)
+   Make cart and checkout sit centered with more breathing room.
+   ============================================================ */
+.woocommerce-cart,
+.woocommerce-checkout {
+    max-width: 1180px !important;
+    margin: 0 auto !important;
+    padding: 0 var(--rm-spacing-md, 24px);
+}
+
+/* Cart table + totals side-by-side layout */
+.woocommerce-cart-form {
+    margin-bottom: 32px;
+}
+.woocommerce-cart-form table.cart {
+    width: 100%;
+}
+.cart-collaterals {
+    max-width: 460px;
+    margin-left: auto;
+}
+
+/* Shipping table on checkout — centered, not left-hugging */
+.woocommerce-shipping-fields,
+.woocommerce-billing-fields {
+    max-width: 720px;
+    margin: 0 auto;
+}
+.woocommerce-shipping-fields__field-wrapper,
+.woocommerce-billing-fields__field-wrapper,
+#shipping_method {
+    width: 100%;
+}
+
+/* Order review table — centered */
+.woocommerce-checkout-review-order {
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Hide SKU line (N/A clutter) */
+.sku_wrapper {
+    display: none !important;
+}
+
+/* Variable product — Add to Cart button should not wrap the label */
+.single_add_to_cart_button,
+button.single_add_to_cart_button {
+    white-space: nowrap !important;
+    min-width: 200px !important;
+}
+
+/* Contact page — keep desktop two-column, fix any leftover narrow wrapper */
+.page-template-page-contact .content-area .container {
+    max-width: 1180px;
+}
+
+/* ============================================================
+   MOBILE NAV — hamburger + drawer (appended only)
+   Existing .header-cat-nav is display:none under 768px.
+   This block adds a hamburger toggle and makes the nav
+   a collapsible drawer instead of hidden.
+   ============================================================ */
+.header-mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    color: var(--rm-text-primary);
+    font-size: 22px;
+    line-height: 1;
+    -webkit-appearance: none;
+    appearance: none;
+}
+.header-mobile-toggle svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+}
+
+@media (max-width: 768px) {
+    /* Show hamburger */
+    .header-mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Hide vehicle selector label on very narrow screens, keep the icon clickable */
+    .header-vehicle-selector-label,
+    .header-vehicle-selector-value {
+        display: none;
+    }
+
+    /* Transform hidden desktop nav into a top drawer */
+    .header-cat-nav {
+        display: block !important;
+        order: 5;
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        background: #fff;
+        border-top: 1px solid var(--rm-border-color, #e5e5e5);
+        transition: max-height 0.28s ease;
+    }
+    .header-cat-nav.is-open {
+        max-height: 240px;
+    }
+    .header-cat-nav .container {
+        padding: 0;
+    }
+    .header-cat-nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 12px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .header-cat-nav li a {
+        display: block;
+        padding: 10px 8px;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--rm-text-primary);
+        text-decoration: none;
+        border-bottom: 1px solid #f3f3f3;
+    }
+    .header-cat-nav li:last-child a {
+        border-bottom: none;
+    }
+
+    /* Search box — make it a collapsible row too */
+    .header-search {
+        display: none !important;
+        position: static !important;
+        padding: 0 16px 12px 16px !important;
+        border: none !important;
+        width: 100%;
+        max-width: 100% !important;
+        order: 4;
+    }
+    .header-search.is-open {
+        display: block !important;
+    }
+
+    /* Show vehicle selector too */
+    .header-main .container {
+        flex-wrap: wrap;
+    }
+
+    .header-actions {
+        gap: 4px;
+    }
+}
+
+/* ============================================================
+   CONTACT MOBILE STACK (appended only)
+   Desktop keeps the existing two-column grid.
+   ============================================================ */
+@media (max-width: 768px) {
+    .page-template-page-contact .content-area .container > div,
+    .page-contact-layout {
+        grid-template-columns: 1fr !important;
+        gap: 28px !important;
+    }
+    .page-template-page-contact .content-area .container > div > * {
+        max-width: 100%;
+    }
+}
+
+/* ============================================================
+   PAGE HEADER — make shop / category pages show H1
+   Append: hide the archive's default empty H1,
+   let the template's .page-header fill the space.
+   ============================================================ */
+.woocommerce-products-header,
+.woocommerce-products-header__title {
+    margin-top: 0;
+}
+
+/* ============================================================
+   CART + CHECKOUT — center, widen (v1.4, appended only)
+   ============================================================ */
+.woocommerce-cart, .woocommerce-checkout { max-width: 1180px !important; margin: 0 auto !important; padding: 0 var(--rm-spacing-md, 24px); }
+.woocommerce-cart-form { margin-bottom: 32px; }
+.woocommerce-cart-form table.cart { width: 100%; }
+.cart-collaterals { max-width: 460px; margin-left: auto; }
+.woocommerce-shipping-fields, .woocommerce-billing-fields { max-width: 720px; margin: 0 auto; }
+.woocommerce-shipping-fields__field-wrapper, .woocommerce-billing-fields__field-wrapper, #shipping_method { width: 100%; }
+.woocommerce-checkout-review-order { max-width: 460px; margin-left: auto; margin-right: auto; }
+.sku_wrapper { display: none !important; }
+.single_add_to_cart_button, button.single_add_to_cart_button { white-space: nowrap !important; min-width: 200px !important; }
+.page-template-page-contact .content-area .container { max-width: 1180px; }
+
+/* ============================================================
+   MOBILE NAV — hamburger + drawer (appended only)
+   ============================================================ */
+.header-mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 6px; color: var(--rm-text-primary); font-size: 22px; line-height: 1; -webkit-appearance: none; appearance: none; }
+@media (max-width: 768px) {
+    .header-mobile-toggle { display: flex; align-items: center; justify-content: center; }
+    .header-vehicle-selector-label, .header-vehicle-selector-value { display: none; }
+    .header-cat-nav { display: block !important; order: 5; width: 100%; max-height: 0; overflow: hidden; background: #fff; border-top: 1px solid var(--rm-border-color, #e5e5e5); transition: max-height 0.28s ease; }
+    .header-cat-nav.is-open { max-height: 240px; }
+    .header-cat-nav .container { padding: 0; }
+    .header-cat-nav ul { list-style: none; margin: 0; padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; }
+    .header-cat-nav li a { display: block; padding: 10px 8px; font-size: 15px; font-weight: 500; color: var(--rm-text-primary); text-decoration: none; border-bottom: 1px solid #f3f3f3; }
+    .header-cat-nav li:last-child a { border-bottom: none; }
+    .header-search { display: none !important; position: static !important; padding: 0 16px 12px 16px !important; border: none !important; width: 100%; max-width: 100% !important; order: 4; }
+    .header-search.is-open { display: block !important; }
+    .header-main .container { flex-wrap: wrap; }
+    .header-actions { gap: 4px; }
+}
+
+/* CONTACT MOBILE STACK */
+@media (max-width: 768px) {
+    .page-template-page-contact .content-area .container > div, .page-contact-layout { grid-template-columns: 1fr !important; gap: 28px !important; }
+}
+
+.woocommerce-products-header, .woocommerce-products-header__title { margin-top: 0; }
