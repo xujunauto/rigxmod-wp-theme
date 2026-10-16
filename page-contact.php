@@ -195,25 +195,25 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
 
                         <div>
                             <label for="rigxmod_cf_name" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#222;"><?php esc_html_e( 'Your Name *', 'rigxmod-autozone' ); ?></label>
-                            <input type="text" id="rigxmod_cf_name" name="rigxmod_cf_name" required style="width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;">
+                            <input type="text" id="rigxmod_cf_name" name="rigxmod_cf_name" required style="width:100%;padding:13px 16px;border:1px solid #e1e4e8;border-radius:10px;font-size:15px;box-sizing:border-box;transition:border-color 0.18s ease,box-shadow 0.18s ease;">
                         </div>
 
                         <div>
                             <label for="rigxmod_cf_email" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#222;"><?php esc_html_e( 'Email Address *', 'rigxmod-autozone' ); ?></label>
-                            <input type="email" id="rigxmod_cf_email" name="rigxmod_cf_email" required style="width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;">
+                            <input type="email" id="rigxmod_cf_email" name="rigxmod_cf_email" required style="width:100%;padding:13px 16px;border:1px solid #e1e4e8;border-radius:10px;font-size:15px;box-sizing:border-box;transition:border-color 0.18s ease,box-shadow 0.18s ease;">
                         </div>
 
                         <div>
                             <label for="rigxmod_cf_subject" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#222;"><?php esc_html_e( 'Message Subject', 'rigxmod-autozone' ); ?></label>
-                            <input type="text" id="rigxmod_cf_subject" name="rigxmod_cf_subject" style="width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;">
+                            <input type="text" id="rigxmod_cf_subject" name="rigxmod_cf_subject" style="width:100%;padding:13px 16px;border:1px solid #e1e4e8;border-radius:10px;font-size:15px;box-sizing:border-box;transition:border-color 0.18s ease,box-shadow 0.18s ease;">
                         </div>
 
                         <div>
                             <label for="rigxmod_cf_message" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#222;"><?php esc_html_e( 'Message *', 'rigxmod-autozone' ); ?></label>
-                            <textarea id="rigxmod_cf_message" name="rigxmod_cf_message" rows="6" required style="width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;resize:vertical;"></textarea>
+                            <textarea id="rigxmod_cf_message" name="rigxmod_cf_message" rows="6" required style="width:100%;padding:13px 16px;border:1px solid #e1e4e8;border-radius:10px;font-size:15px;box-sizing:border-box;resize:vertical;transition:border-color 0.18s ease,box-shadow 0.18s ease;"></textarea>
                         </div>
 
-                        <button type="submit" name="rigxmod_cf_submit" value="1" style="padding:14px 32px;background:#E31937;color:#fff;border:none;border-radius:4px;font-size:15px;font-weight:600;cursor:pointer;align-self:flex-start;transition:background 0.2s;" onmouseover="this.style.background='#B3121D'" onmouseout="this.style.background='#E31937'">
+                        <button type="submit" name="rigxmod_cf_submit" value="1" style="padding:14px 32px;background:#E31937;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;align-self:flex-start;transition:background 0.2s;" onmouseover="this.style.background='#B3121D'" onmouseout="this.style.background='#E31937'">
                             <?php esc_html_e( 'Send Message', 'rigxmod-autozone' ); ?>
                         </button>
                     </form>
