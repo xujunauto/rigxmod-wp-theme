@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * The header for our theme
  *
@@ -46,10 +46,6 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
 
-                <!-- Mobile hamburger -->
-                <button type="button" class="header-mobile-toggle" id="rigx-mobile-toggle" aria-label="Menu" aria-expanded="false">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                </button>
 
                 <!-- Vehicle Selector (for off-road parts - "Add Your Vehicle" style) -->
                 <div class="header-vehicle-selector" onclick="document.getElementById('vehicle-modal').style.display='flex'">
