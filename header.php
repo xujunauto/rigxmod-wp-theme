@@ -137,7 +137,7 @@
                     echo '<ul>';
                     echo '<li><a href="' . esc_url( $rigx_shop_url ) . '">' . esc_html__( 'Products', 'rigxmod-autozone' ) . '</a></li>';
                     echo '<li><a href="' . esc_url( $rigx_about_url ) . '">' . esc_html__( 'About Us', 'rigxmod-autozone' ) . '</a></li>';
-                    echo '<li><a href="' . esc_url( $rigx_contact_url ) . '">' . esc_html__( 'Contact', 'rigxmod-autozone' ) . '</a></li>';
+                    echo '<li><a href="' . esc_url( $rigx_contact_url ) . '">' . esc_html__( 'Contact Us', 'rigxmod-autozone' ) . '</a></li>';
                     echo '</ul>';
                 }
                 ?>

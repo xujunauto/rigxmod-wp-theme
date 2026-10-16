@@ -2323,3 +2323,362 @@ textarea.form-control {
         gap: 24px !important;
     }
 }
+
+/* ============================================
+   GRID FIX - WooCommerce clearfix pseudos
+   ("content:' '; display:table") become phantom
+   grid items and leave the first cell empty.
+   ============================================ */
+.woocommerce ul.products::before,
+.woocommerce ul.products::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* ============================================
+   CONTENT TYPOGRAPHY SYSTEM v1.1
+   Tesla / SpaceX inspired fixed type scale for
+   every content page: About, Contact, FAQs,
+   Privacy, Terms, Shipping, Returns, Warranty.
+   All future page content follows this pattern.
+   ============================================ */
+
+/* Page header band */
+.page-header {
+    background: #ffffff;
+    padding: 72px 0 44px;
+    border-bottom: 1px solid #ececec;
+}
+
+.page-header h1 {
+    font-size: 40px;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: #171a1d;
+    margin: 0;
+    max-width: 840px;
+}
+
+.page-header p {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #5f6368;
+    margin: 14px 0 0;
+    max-width: 720px;
+}
+
+/* Shared readable content column */
+.entry-content,
+.about-page,
+.policy-page,
+.contact-info-block,
+.rm-faq {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #3c4043;
+}
+
+.entry-content,
+.policy-page,
+.about-page,
+.rm-faq {
+    max-width: 860px;
+}
+
+/* Intro lead paragraph */
+.rm-lead {
+    font-size: 18px;
+    line-height: 1.75;
+    color: #4b5563;
+    margin: 8px 0 28px;
+}
+
+/* Content headings */
+.entry-content h2,
+.about-page h2,
+.policy-page h2,
+.contact-info-block h2,
+.rm-faq h2 {
+    font-size: 27px;
+    line-height: 1.35;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #171a1d;
+    margin: 48px 0 18px;
+}
+
+.entry-content h3,
+.about-page h3,
+.policy-page h3,
+.contact-info-block h3,
+.rm-faq h3 {
+    font-size: 20px;
+    line-height: 1.45;
+    font-weight: 600;
+    color: #171a1d;
+    margin: 32px 0 12px;
+}
+
+.entry-content h4,
+.about-page h4,
+.policy-page h4 {
+    font-size: 17px;
+    line-height: 1.5;
+    font-weight: 600;
+    color: #171a1d;
+    margin: 24px 0 10px;
+}
+
+.about-page > h2:first-child,
+.policy-page > h2:first-child,
+.contact-info-block > h2:first-child,
+.rm-faq > h2:first-child {
+    margin-top: 0;
+}
+
+/* Content text elements */
+.entry-content p,
+.about-page p,
+.policy-page p,
+.contact-info-block p {
+    margin: 0 0 18px;
+}
+
+.entry-content strong,
+.about-page strong,
+.policy-page strong,
+.contact-info-block strong {
+    font-weight: 600;
+    color: #171a1d;
+}
+
+.entry-content ul,
+.entry-content ol,
+.about-page ul,
+.about-page ol,
+.policy-page ul,
+.policy-page ol {
+    margin: 0 0 22px;
+    padding-left: 22px;
+}
+
+.entry-content li,
+.about-page li,
+.policy-page li {
+    margin: 0 0 10px;
+    line-height: 1.8;
+}
+
+.entry-content a,
+.about-page a,
+.policy-page a,
+.contact-info-block a,
+.rm-faq a {
+    color: var(--rm-primary);
+    text-decoration: none;
+    text-underline-offset: 3px;
+}
+
+.entry-content a:hover,
+.about-page a:hover,
+.policy-page a:hover,
+.contact-info-block a:hover,
+.rm-faq a:hover {
+    color: var(--rm-primary-dark);
+    text-decoration: underline;
+}
+
+/* Content tables (e.g. contact company info) */
+.entry-content table,
+.contact-info-block table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 24px;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.entry-content table td,
+.entry-content table th,
+.contact-info-block table td,
+.contact-info-block table th {
+    padding: 14px 16px;
+    border-bottom: 1px solid #e8e8e8;
+    text-align: left;
+    vertical-align: top;
+}
+
+.contact-info-block table td:first-child {
+    width: 220px;
+    color: #171a1d;
+    white-space: nowrap;
+}
+
+/* ============================================
+   FAQ - clean accordion (no JS required)
+   ============================================ */
+.rm-faq-intro {
+    font-size: 17px;
+    color: #5f6368;
+    line-height: 1.75;
+    margin: 4px 0 8px;
+}
+
+.rm-faq-group {
+    margin-top: 20px;
+}
+
+.rm-faq-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--rm-primary);
+    margin: 36px 0 6px;
+}
+
+details.rm-faq-item {
+    border-bottom: 1px solid #e8e8e8;
+}
+
+details.rm-faq-item:first-of-type {
+    border-top: 1px solid #e8e8e8;
+}
+
+.rm-faq-item summary {
+    list-style: none;
+    cursor: pointer;
+    position: relative;
+    padding: 22px 44px 22px 0;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #171a1d;
+    transition: color 0.2s ease;
+}
+
+.rm-faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.rm-faq-item summary:hover {
+    color: var(--rm-primary);
+}
+
+.rm-faq-item summary::after {
+    content: '+';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    font-weight: 400;
+    color: #9aa0a6;
+    line-height: 1;
+}
+
+details.rm-faq-item[open] summary::after {
+    content: '\2212';
+}
+
+.rm-faq-item .rm-a {
+    padding: 0 44px 24px 0;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #4b5563;
+}
+
+.rm-faq-item .rm-a p {
+    margin: 0 0 10px;
+}
+
+.rm-faq-item .rm-a p:last-child {
+    margin-bottom: 0;
+}
+
+.rm-faq-item .rm-a ul {
+    margin: 6px 0 0;
+    padding-left: 20px;
+}
+
+.rm-faq-item .rm-a li {
+    margin-bottom: 6px;
+}
+
+.rm-faq-contact {
+    margin-top: 40px;
+    padding: 28px 32px;
+    background: #f8f8f8;
+    border-radius: 8px;
+}
+
+.rm-faq-contact h3 {
+    margin: 0 0 10px;
+}
+
+.rm-faq-contact p {
+    margin: 0;
+    font-size: 15px;
+}
+
+/* Content typography - mobile */
+@media (max-width: 768px) {
+    .page-header {
+        padding: 48px 0 28px;
+    }
+
+    .page-header h1 {
+        font-size: 29px;
+    }
+
+    .page-header p {
+        font-size: 16px;
+    }
+
+    .entry-content,
+    .about-page,
+    .policy-page,
+    .contact-info-block,
+    .rm-faq {
+        font-size: 15px;
+        line-height: 1.8;
+    }
+
+    .rm-lead {
+        font-size: 16px;
+    }
+
+    .entry-content h2,
+    .about-page h2,
+    .policy-page h2,
+    .contact-info-block h2,
+    .rm-faq h2 {
+        font-size: 23px;
+        margin: 36px 0 14px;
+    }
+
+    .entry-content h3,
+    .about-page h3,
+    .policy-page h3,
+    .contact-info-block h3,
+    .rm-faq h3 {
+        font-size: 18px;
+        margin: 26px 0 10px;
+    }
+
+    .rm-faq-item summary {
+        font-size: 16px;
+        padding-right: 38px;
+    }
+
+    .rm-faq-item .rm-a {
+        padding-right: 0;
+    }
+
+    .contact-info-block table td:first-child {
+        width: auto;
+        white-space: normal;
+    }
+}

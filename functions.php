@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Theme version
-define( 'RIGXMOD_VERSION', '1.0.4' );
+define( 'RIGXMOD_VERSION', '1.0.6' );
 define( 'RIGXMOD_DIR', get_template_directory() );
 define( 'RIGXMOD_URI', get_template_directory_uri() );
 
@@ -257,33 +257,77 @@ function rigxmod_fix_zongheng_translation() {
     ?>
     <script>
     (function () {
-        var FIX = { '宗恒': '纵横' };
-        function walk(nodes) {
-            for (var i = 0; i < nodes.length; i++) {
-                var n = nodes[i];
-                if (n.nodeType === 3) {
-                    var v = n.nodeValue;
-                    if (v.indexOf('宗恒') > -1) {
-                        n.nodeValue = v.replace(/宗恒/g, '纵横');
-                    }
-                } else if (n.nodeType === 1 && n.childNodes && n.childNodes.length) {
-                    walk(n.childNodes);
+        // GTranslate mistranslation overrides (machine translation cannot be configured on the free plan)
+        var FIX = [
+            ['宗恒', '纵横'],           // "Zongheng" -> wrong 宗恒, correct 纵横
+            ['畅销书', '热销商品']       // "Best Sellers" -> wrong 畅销书 (books)
+        ];
+        // GTranslate renders "Moxi" as several different wrong transliterations (摩西/魔曦/魔喜...);
+        // catch every variant when it appears in the company name
+        var REGEX_FIX = [
+            [/[摩魔莫墨][西曦喜熙]科技有限公司/g, '沫熹科技有限公司']
+        ];
+        var SKIP_TAGS = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, TEXTAREA: 1 };
+
+        function applyFix(value) {
+            var out = value;
+            for (var i = 0; i < FIX.length; i++) {
+                if (out.indexOf(FIX[i][0]) > -1) {
+                    out = out.split(FIX[i][0]).join(FIX[i][1]);
                 }
             }
+            for (var j = 0; j < REGEX_FIX.length; j++) {
+                out = out.replace(REGEX_FIX[j][0], REGEX_FIX[j][1]);
+            }
+            return out === value ? null : out;
         }
-        walk(document.body.childNodes);
-        var timer;
-        var mo = new MutationObserver(function (muts) {
-            if (timer) return;
-            timer = setTimeout(function () {
-                timer = null;
-                for (var k = 0; k < m.length; k++) {
-                    if (m[k].addedNodes && m[k].addedNodes.length) walk(m[k].addedNodes);
-                    if (m[k].target && m[k].target.nodeType === 3) walk([m[k].target]);
+
+        function scan() {
+            try {
+                var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+                var node, changed = 0;
+                while ((node = walker.nextNode())) {
+                    var parent = node.parentNode;
+                    if (!parent || SKIP_TAGS[parent.nodeName]) {
+                        continue;
+                    }
+                    var result = applyFix(node.nodeValue);
+                    if (result !== null) {
+                        node.nodeValue = result;
+                        if (++changed >= 300) {
+                            break;
+                        }
+                    }
                 }
-            }, 120);
+            } catch (e) { /* no-op */ }
+        }
+
+        scan();
+        // GTranslate replaces text asynchronously (and lazily on scroll);
+        // re-run on a schedule so later translations are corrected too.
+        [300, 800, 1500, 3000, 6000, 10000].forEach(function (delay) {
+            setTimeout(scan, delay);
         });
-        mo.observe(document.body, { childList: true, characterData: true, subtree: true });
+
+        var pending = false;
+        function scheduleScan() {
+            if (pending) {
+                return;
+            }
+            pending = true;
+            setTimeout(function () {
+                pending = false;
+                scan();
+            }, 150);
+        }
+
+        new MutationObserver(scheduleScan).observe(document.body, {
+            childList: true,
+            subtree: true,
+            characterData: true
+        });
+
+        window.addEventListener('scroll', scheduleScan, { passive: true });
     })();
     </script>
     <?php
@@ -444,3 +488,50 @@ function rigxmod_restore_stashed_cart() {
     }
 }
 add_action( 'template_redirect', 'rigxmod_restore_stashed_cart', 20 );
+
+/**
+ * FAQPage structured data for the FAQs page (SEO rich results).
+ */
+function rigxmod_faq_schema() {
+    if ( ! is_page( 'faqs' ) ) {
+        return;
+    }
+
+    $faqs = array(
+        array( 'Are your parts specifically designed for Jetour T1, T2 and Zongheng G700?', 'Yes. Every RIGX MOD part is engineered for a specific Jetour model, trim and seat layout (5-seat or 6-seat). Check the compatibility table on each product page, or send your model year and a photo of your vehicle to engineering@rigxmod.com and we will confirm fitment before you order.' ),
+        array( 'What materials are your off-road parts made from?', 'Our armor, roof racks and structural parts use aerospace-grade aluminum alloy (and reinforced steel where load requires), with precision CNC machining, laser cutting and powder-coated finishes. Every product is tested against vibration, corrosion and real off-road conditions.' ),
+        array( 'Are the parts bolt-on, or do they require drilling and modification?', 'Most RIGX MOD parts are direct bolt-on replacements using the original vehicle mounting points. No welding or cutting is required. Each product includes an installation guide, and basic hand tools are usually sufficient.' ),
+        array( 'Do I need professional installation?', 'Many customers install our parts at home. For bumpers, suspension lifts and electrical items such as light bars, professional installation is recommended to ensure safety and preserve the product warranty.' ),
+        array( 'Do you ship worldwide? How much does shipping cost?', 'Yes, we ship to most countries via express partners including DHL, FedEx and UPS. Shipping is calculated at checkout based on weight, volume and destination. Bulk and freight (LCL) orders can be quoted by sales@rigxmod.com.' ),
+        array( 'How long does delivery take?', 'Orders are processed within 1-3 business days. Express delivery usually takes 7-15 business days; standard/freight delivery takes 20-45 business days depending on destination and customs clearance. You receive a tracking number by email as soon as the order ships.' ),
+        array( 'Will I pay import duties and taxes?', 'Prices on our website do not include destination import duties, VAT or customs fees, which are charged by your local customs authority. We support both DDU and DDP terms. Contact us before ordering if you need a DDP (duties paid) quotation.' ),
+        array( 'What payment methods do you accept?', 'We accept PayPal, major credit/debit cards (Visa, Mastercard, American Express), Apple Pay and bank transfer for large or wholesale orders.' ),
+        array( 'Can I cancel or change my order?', 'Orders can be changed or cancelled free of charge before they ship. If the package has already left our warehouse, please follow our return process after delivery. Contact sales@rigxmod.com as soon as possible.' ),
+        array( 'What is your return policy?', 'Unused, uninstalled products in original packaging can be returned within 30 days of delivery. Custom, special-order and clearly marked final-sale items are non-returnable. Full conditions are on our Return Policy page.' ),
+        array( 'What warranty do RIGX MOD products carry?', 'All products carry a 12-month limited warranty against manufacturing defects in materials and workmanship from the date of purchase. Normal wear, off-road impact damage and improper installation are not covered.' ),
+        array( 'My order arrived damaged or a part is missing. What should I do?', 'Please take photos of the outer packaging and the item within 48 hours of delivery and email them to sales@rigxmod.com with your order number. We will arrange replacement parts or a reshipment according to the claim.' ),
+        array( 'Do you offer wholesale, ODM or OEM services?', 'Yes. We support distributors, workshops and brands with wholesale pricing, private-label/OEM production and ODM development from drawings or samples. Minimum order quantities apply. Email sales@rigxmod.com for a trade account and catalog.' ),
+        array( 'How do I use a coupon code?', 'Enter the code in the coupon field at checkout or cart page and click apply. Codes are case sensitive and cannot be combined unless the campaign rules state otherwise.' ),
+    );
+
+    $entities = array();
+    foreach ( $faqs as $f ) {
+        $entities[] = array(
+            '@type'           => 'Question',
+            'name'            => $f[0],
+            'acceptedAnswer'  => array(
+                '@type' => 'Answer',
+                'text'  => $f[1],
+            ),
+        );
+    }
+
+    $schema = array(
+        '@context'   => 'https://schema.org',
+        '@type'      => 'FAQPage',
+        'mainEntity' => $entities,
+    );
+
+    echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
+}
+add_action( 'wp_head', 'rigxmod_faq_schema', 20 );

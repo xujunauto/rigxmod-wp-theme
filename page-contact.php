@@ -204,7 +204,7 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
                         </div>
 
                         <div>
-                            <label for="rigxmod_cf_subject" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#222;"><?php esc_html_e( 'Subject', 'rigxmod-autozone' ); ?></label>
+                            <label for="rigxmod_cf_subject" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#222;"><?php esc_html_e( 'Message Subject', 'rigxmod-autozone' ); ?></label>
                             <input type="text" id="rigxmod_cf_subject" name="rigxmod_cf_subject" style="width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:4px;font-size:14px;box-sizing:border-box;">
                         </div>
 
