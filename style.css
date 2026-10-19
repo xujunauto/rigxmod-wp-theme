@@ -3298,3 +3298,36 @@ button.single_add_to_cart_button {
 }
 
 .woocommerce-products-header, .woocommerce-products-header__title { margin-top: 0; }
+
+/* ============================================================
+   SIDEBAR WIDGET ALIGNMENT FIX (appended only)
+   Native WP/WooCommerce widgets (product categories, price filter,
+   layered nav, recent products, etc.) render as direct children of
+   .sidebar-widget without a .sidebar-widget-content wrapper, so they
+   were flush against the card's left edge. Pad direct children to
+   match the title's horizontal padding so all sidebar content aligns
+   vertically with the widget title text.
+   ============================================================ */
+.sidebar-widget > *:not(.sidebar-widget-title):not(.sidebar-widget-content) {
+    padding-left: var(--rm-spacing-md);
+    padding-right: var(--rm-spacing-md);
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.sidebar-widget > ul,
+.sidebar-widget > ol {
+    list-style: none;
+    padding-top: calc(var(--rm-spacing-md) * 0.5);
+    padding-bottom: var(--rm-spacing-md);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.sidebar-widget > form,
+.sidebar-widget > p {
+    padding-top: calc(var(--rm-spacing-md) * 0.5);
+    padding-bottom: var(--rm-spacing-md);
+    margin-top: 0;
+    margin-bottom: 0;
+}

@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Theme version
-define( 'RIGXMOD_VERSION', '1.1.0' );
+define( 'RIGXMOD_VERSION', '1.1.2' );
 define( 'RIGXMOD_DIR', get_template_directory() );
 define( 'RIGXMOD_URI', get_template_directory_uri() );
 
@@ -151,6 +151,58 @@ function rigxmod_widgets_init() {
     ) );
 }
 add_action( 'widgets_init', 'rigxmod_widgets_init' );
+
+/**
+ * Force English as the default site language for GTranslate.
+ * The plugin's "detect browser language" option causes the site to render
+ * in Chinese for visitors whose browser is zh-CN. We hard-disable that flag
+ * at read time so even if it is re-enabled in wp-admin it stays off.
+ */
+add_filter( 'option_gtranslate', 'rigxmod_gtranslate_force_default_en' );
+function rigxmod_gtranslate_force_default_en( $g ) {
+    if ( is_array( $g ) ) {
+        $g['detect_browser_language'] = '';
+        $g['default_language']        = 'en';
+    }
+    return $g;
+}
+
+/**
+ * Aliyun DirectMail SMTP — hard-configure wp_mail so order notifications,
+ * password resets and registration confirmations actually reach users.
+ *
+ * Credentials (provided by user, DirectMail "Trigger Mail" sender):
+ *   Host:       smtpdm.aliyun.com
+ *   Port:       465
+ *   Security:   SSL (PHPMailer::ENCRYPTION_SMTPS)
+ *   Username:   sales@mail.rigxmod.com
+ *   Password:   set via DirectMail console — "设置 SMTP 密码"
+ *
+ * Reply-To is kept as sales@rigxmod.com so customers replying to order
+ * mails land in a mailbox the team actually reads.
+ */
+add_action( 'phpmailer_init', 'rigxmod_configure_smtp' );
+function rigxmod_configure_smtp( $phpmailer ) {
+    $phpmailer->isSMTP();
+    $phpmailer->Host       = 'smtpdm.aliyun.com';
+    $phpmailer->SMTPAuth   = true;
+    $phpmailer->Username   = 'sales@mail.rigxmod.com';
+    $phpmailer->Password   = 'RIGXMODsmtp2026';
+    $phpmailer->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+    $phpmailer->Port       = 465;
+    $phpmailer->Timeout    = 20;
+}
+
+// Default "From" for all wp_mail() calls.
+add_filter( 'wp_mail_from', function ( $from ) { return 'sales@mail.rigxmod.com'; } );
+add_filter( 'wp_mail_from_name', function ( $name ) { return 'RIGX MOD'; } );
+
+// WooCommerce overrides (stops using the placeholder admin@exmaple.com).
+add_filter( 'woocommerce_email_from_address', function ( $addr ) { return 'sales@mail.rigxmod.com'; } );
+add_filter( 'woocommerce_email_from_name', function ( $name ) { return 'RIGX MOD'; } );
+add_filter( 'woocommerce_email_reply_to_addresses', function ( $addrs ) {
+    return array( 'sales@rigxmod.com' );
+} );
 
 /**
  * Custom template tags for this theme.
