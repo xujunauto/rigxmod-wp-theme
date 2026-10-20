@@ -622,6 +622,64 @@ add_filter( 'woocommerce_product_add_to_cart_url', function ( $url, $product ) {
 }, 10, 2 );
 
 /* ============================================================
+ * RigxMod — Manually output meta description (bypasses Rank Math
+ * Head class which is registered but not firing on this install).
+ * Uses rank_math_options global templates + per-post meta we batch-filled.
+ * ============================================================ */
+add_action( 'wp_head', 'rigxmod_output_meta_description', 1 );
+function rigxmod_output_meta_description() {
+    // Don't double-output if Rank Math suddenly starts working
+    if ( has_action( 'wp_head', [ '\RankMath\Frontend\Head', 'head' ] ) ) {
+        return;
+    }
+
+    $rm_opts   = get_option( 'rank_math_options', [] );
+    $site_desc = ( $rm_opts['homepage_description'] ?? '' ) ?: get_bloginfo( 'description' );
+    $site_name = get_bloginfo( 'name' );
+    $desc      = '';
+
+    if ( is_front_page() ) {
+        $desc = (string)( $rm_opts['homepage_description'] ?? '' );
+    } elseif ( is_singular( 'product' ) ) {
+        $desc = trim( (string)get_post_meta( get_the_ID(), 'rank_math_description', true ) );
+    } elseif ( is_page() ) {
+        $desc = trim( (string)get_post_meta( get_the_ID(), 'rank_math_description', true ) );
+    } elseif ( is_singular() ) {
+        $desc = trim( (string)get_post_meta( get_the_ID(), 'rank_math_description', true ) );
+        if ( empty( $desc ) ) {
+            $desc = (string)( $rm_opts['pt_post_description'] ?? '' );
+        }
+    } elseif ( is_tax( 'product_cat' ) ) {
+        $term = get_queried_object();
+        if ( $term ) {
+            $desc = trim( (string)get_term_meta( $term->term_id, 'rank_math_description', true ) );
+            if ( empty( $desc ) ) {
+                $tpl  = (string)( $rm_opts['tax_product_cat_description'] ?? 'Shop %term% at %site%' );
+                $desc = str_replace( [ '%term%', '%site%' ], [ $term->name, $site_name ], $tpl );
+            }
+        }
+    } elseif ( is_home() ) {
+        $desc = (string)( $rm_opts['blog_description'] ?? "{$site_name} blog" );
+    }
+
+    // Fallback
+    if ( empty( $desc ) ) {
+        $desc = $site_desc;
+    }
+
+    // Sanitize + trim to 155 chars
+    $desc = wp_strip_all_tags( $desc );
+    $desc = preg_replace( '/\s+/u', ' ', $desc );
+    if ( function_exists( 'mb_strlen' ) && mb_strlen( $desc, 'UTF-8' ) > 155 ) {
+        $desc = mb_substr( $desc, 0, 152, 'UTF-8' ) . '…';
+    }
+
+    if ( ! empty( $desc ) ) {
+        echo '<meta name="description" content="' . esc_attr( $desc ) . '" />' . "\n";
+    }
+}
+
+/* ============================================================
  * RigxMod — Placeholder slots for external tracking code
  * These are intentionally empty. Fill them when you receive your:
  *   1. GA4 measurement ID  (G-XXXXXXXXXX)
