@@ -4,7 +4,7 @@ Theme URI: https://rigxmod.com
 Author: RIGX MOD
 Author URI: https://rigxmod.com
 Description: AutoZone-inspired e-commerce theme for RIGX MOD off-road parts. Clean, professional, conversion-focused design with Tesla red and Cloudflare orange accents.
-Version: 1.0.2
+Version: 1.1.2
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
@@ -3330,4 +3330,29 @@ button.single_add_to_cart_button {
     padding-bottom: var(--rm-spacing-md);
     margin-top: 0;
     margin-bottom: 0;
+}
+
+/* ============================================================
+ * RigxMod — GTranslate injected <font> color-contrast fix
+ * GTranslate wraps translated text in <font style="vertical-align: inherit;">
+ * which sets color inline, forcing gray text that fails WCAG 4.5:1.
+ * These rules override the injected style so colors inherit properly.
+ * ============================================================ */
+.footer-payment-methods font[style*=""vertical-align""],
+.footer-payment-methods font font[style*=""vertical-align""] {
+    color: inherit !important;
+    opacity: inherit !important;
+}
+
+.news-card-meta font[style*=""vertical-align""],
+.news-card-meta font font[style*=""vertical-align""] {
+    color: inherit !important;
+    opacity: inherit !important;
+}
+
+/* Global fallback — any GTranslate injected <font> inside brand names
+   or UI chrome should not override carefully chosen colors. */
+.site-footer font[style*=""vertical-align""],
+.site-footer font font[style*=""vertical-align""] {
+    color: inherit !important;
 }

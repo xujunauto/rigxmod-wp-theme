@@ -17,7 +17,7 @@
 <?php wp_body_open(); ?>
 
 <div id="page" class="site">
-    <a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'rigxmod-autozone' ); ?></a>
+    <a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'rigxmod-autozone' ); ?></a>
 
     <header id="masthead" class="site-header">
         <!-- Top Promo Bar -->
@@ -378,6 +378,6 @@
     })();
     </script>
 
-    <div id="content" class="site-content">
+    <div id="content" class="site-content" tabindex="-1">
 
 

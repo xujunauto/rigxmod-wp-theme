@@ -587,3 +587,58 @@ function rigxmod_faq_schema() {
     echo '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
 }
 add_action( 'wp_head', 'rigxmod_faq_schema', 20 );
+
+/* ============================================================
+ * RigxMod — Prevent GTranslate from translating WooCommerce UI
+ * GTranslate wraps text in <font> and rewrites aria-labels, causing
+ * accessibility failures (label-content-name-mismatch, color-contrast).
+ * We add translate="no" to the product card wrapper, keeping
+ * Add-to-Cart buttons, star ratings, stock text, and prices in English.
+ * ============================================================ */
+add_filter( 'post_class', function ( $classes, $class, $post_id ) {
+    if ( get_post_type( $post_id ) === 'product' ) {
+        $classes[] = 'translate-no';
+    }
+    return $classes;
+}, 10, 3 );
+
+add_filter( 'woocommerce_post_class', function ( $classes ) {
+    $classes[] = 'translate-no';
+    return $classes;
+} );
+
+/* Also block GTranslate translation on product loop button aria-labels
+ * by returning English button text directly from the WooCommerce filter. */
+add_filter( 'woocommerce_product_add_to_cart_text', function ( $text, $product ) {
+    if ( $product->is_type( 'variable' ) ) {
+        return 'Select options';
+    }
+    return 'Add to cart';
+}, 10, 2 );
+
+add_filter( 'woocommerce_product_add_to_cart_url', function ( $url, $product ) {
+    // We don't want to change URL, but the callback signature needs both args
+    return $url;
+}, 10, 2 );
+
+/* ============================================================
+ * RigxMod — Placeholder slots for external tracking code
+ * These are intentionally empty. Fill them when you receive your:
+ *   1. GA4 measurement ID  (G-XXXXXXXXXX)
+ *   2. Google Search Console verification meta tag
+ * ============================================================ */
+add_action( 'wp_head', function () {
+    // Google Search Console — paste <meta name="google-site-verification" content="..."> here
+    // echo '<meta name="google-site-verification" content="REPLACE_WITH_YOUR_VERIFICATION_CODE">' . "\n";
+
+    // Google Analytics 4 — replace G-XXXXXXXXXX with your measurement ID
+    // echo "<!-- Google tag (gtag.js) -->
+    // <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    // <script>
+    //   window.dataLayer = window.dataLayer || [];
+    //   function gtag(){dataLayer.push(arguments);}
+    //   gtag('js', new Date());
+    //   gtag('config', 'G-XXXXXXXXXX');
+    // </script>
+    // " . "\n";
+}, 5 );

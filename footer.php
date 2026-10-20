@@ -153,7 +153,7 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
                 <div class="footer-copyright">
                     &copy; <?php echo esc_html( date( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?>. <?php esc_html_e( 'All rights reserved.', 'rigxmod-autozone' ); ?>
                 </div>
-                <div class="footer-payment-methods">
+                <div class="footer-payment-methods" translate="no">
                     <span>PayPal</span>
                     <span>VISA</span>
                     <span>MC</span>

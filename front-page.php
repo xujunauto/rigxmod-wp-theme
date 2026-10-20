@@ -183,9 +183,9 @@ get_header();
                             ?>
                             <article id="post-<?php the_ID(); ?>" <?php post_class( 'news-card' ); ?>>
                                 <?php if ( has_post_thumbnail() ) : ?>
-                                    <a href="<?php the_permalink(); ?>" class="news-card-image" style="background-image: url('<?php echo esc_url( get_the_post_thumbnail_url( get_the_ID(), 'large' ) ); ?>');"></a>
+                                    <a href="<?php the_permalink(); ?>" class="news-card-image" aria-label="<?php echo esc_attr( get_the_title() ); ?>" style="background-image: url('<?php echo esc_url( get_the_post_thumbnail_url( get_the_ID(), 'large' ) ); ?>');"></a>
                                 <?php else : ?>
-                                    <a href="<?php the_permalink(); ?>" class="news-card-image"></a>
+                                    <a href="<?php the_permalink(); ?>" class="news-card-image" aria-label="<?php echo esc_attr( get_the_title() ); ?>"></a>
                                 <?php endif; ?>
                                 <div class="news-card-content">
                                     <div class="news-card-category">
