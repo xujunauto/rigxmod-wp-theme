@@ -4,7 +4,7 @@ Theme URI: https://rigxmod.com
 Author: RIGX MOD
 Author URI: https://rigxmod.com
 Description: AutoZone-inspired e-commerce theme for RIGX MOD off-road parts. Clean, professional, conversion-focused design with Tesla red and Cloudflare orange accents.
-Version: 1.1.5
+Version: 1.1.6
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
@@ -3455,4 +3455,44 @@ body.woocommerce-checkout .woocommerce-checkout-review-order {
     width: 100%;
     margin-left: 0;
     margin-right: 0;
+}
+
+/* ============================================================
+   CHECKOUT — single-column vertical flow (Taobao / Tmall style)
+   Billing details on top at full width, then the "ship to a
+   different address" block and order notes, then the order
+   review, then payment.
+   ============================================================ */
+body.woocommerce-checkout #customer_details .col-1,
+body.woocommerce-checkout #customer_details .col-2 {
+    float: none;
+    width: 100%;
+}
+
+body.woocommerce-checkout #customer_details .col-2 {
+    margin-top: 24px;
+}
+
+/* Address fields: two per row across the full width */
+body.woocommerce-checkout .woocommerce-billing-fields__field-wrapper,
+body.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 24px;
+    row-gap: 16px;
+}
+
+body.woocommerce-checkout .woocommerce-billing-fields__field-wrapper .form-row,
+body.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row {
+    float: none;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    body.woocommerce-checkout .woocommerce-billing-fields__field-wrapper,
+    body.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
