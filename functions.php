@@ -355,12 +355,17 @@ function rigxmod_fix_zongheng_translation() {
         }
 
         scan();
-        // GTranslate replaces text asynchronously (and lazily on scroll);
-        // re-run on a schedule so later translations are corrected too.
-        [300, 800, 1500, 3000, 6000, 10000].forEach(function (delay) {
+        // GTranslate replaces text asynchronously; re-run a few times shortly
+        // after load so late translations are corrected too. The list is kept
+        // short on purpose: every run walks all text nodes in <body>.
+        [300, 1200, 4000].forEach(function (delay) {
             setTimeout(scan, delay);
         });
 
+        // GTranslate injects new <font> nodes when it translates (including
+        // lazily on scroll), so watching childList alone catches every batch.
+        // characterData and the scroll listener were removed: they fired on
+        // every scroll tick and made the whole page feel sluggish.
         var pending = false;
         function scheduleScan() {
             if (pending) {
@@ -370,16 +375,13 @@ function rigxmod_fix_zongheng_translation() {
             setTimeout(function () {
                 pending = false;
                 scan();
-            }, 150);
+            }, 200);
         }
 
         new MutationObserver(scheduleScan).observe(document.body, {
             childList: true,
-            subtree: true,
-            characterData: true
+            subtree: true
         });
-
-        window.addEventListener('scroll', scheduleScan, { passive: true });
     })();
     </script>
     <?php

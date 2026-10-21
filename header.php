@@ -194,34 +194,36 @@
     </div>
 
     <?php
-    // Read the vehicle categories under "Shop by Vehicle" that actually contain products.
+    // Read the vehicle categories that actually contain products.
+    // NOTE: the Jetour vehicle categories (Jetour T1 / T2 / G700) live at the
+    // top level of product_cat, so query top-level terms and keep the Jetour ones.
     $rigx_vehicles = array();
-    $rigx_parent   = get_term_by( 'slug', 'by-vehicle', 'product_cat' );
-    if ( $rigx_parent && ! is_wp_error( $rigx_parent ) ) {
-        $rigx_terms = get_terms( array(
-            'taxonomy'   => 'product_cat',
-            'parent'     => (int) $rigx_parent->term_id,
-            'hide_empty' => true,
-            'orderby'    => 'name',
-            'order'      => 'ASC',
-        ) );
-        if ( ! is_wp_error( $rigx_terms ) ) {
-            foreach ( $rigx_terms as $rigx_term ) {
-                $rigx_link = get_term_link( $rigx_term );
-                if ( is_wp_error( $rigx_link ) ) {
-                    continue;
-                }
-                $rigx_parts = preg_split( '/\s+/', trim( $rigx_term->name ), 2 );
-                $rigx_brand = isset( $rigx_parts[0] ) ? $rigx_parts[0] : $rigx_term->name;
-                $rigx_key   = sanitize_title( $rigx_brand );
-                if ( ! isset( $rigx_vehicles[ $rigx_key ] ) ) {
-                    $rigx_vehicles[ $rigx_key ] = array( 'name' => $rigx_brand, 'models' => array() );
-                }
-                $rigx_vehicles[ $rigx_key ]['models'][] = array(
-                    'name' => $rigx_term->name,
-                    'url'  => $rigx_link,
-                );
+    $rigx_terms    = get_terms( array(
+        'taxonomy'   => 'product_cat',
+        'parent'     => 0,
+        'hide_empty' => true,
+        'orderby'    => 'name',
+        'order'      => 'ASC',
+    ) );
+    if ( ! is_wp_error( $rigx_terms ) ) {
+        foreach ( $rigx_terms as $rigx_term ) {
+            if ( false === stripos( $rigx_term->name, 'Jetour' ) ) {
+                continue;
             }
+            $rigx_link = get_term_link( $rigx_term );
+            if ( is_wp_error( $rigx_link ) ) {
+                continue;
+            }
+            $rigx_parts = preg_split( '/\s+/', trim( $rigx_term->name ), 2 );
+            $rigx_brand = isset( $rigx_parts[0] ) ? $rigx_parts[0] : $rigx_term->name;
+            $rigx_key   = sanitize_title( $rigx_brand );
+            if ( ! isset( $rigx_vehicles[ $rigx_key ] ) ) {
+                $rigx_vehicles[ $rigx_key ] = array( 'name' => $rigx_brand, 'models' => array() );
+            }
+            $rigx_vehicles[ $rigx_key ]['models'][] = array(
+                'name' => $rigx_term->name,
+                'url'  => $rigx_link,
+            );
         }
     }
     ?>

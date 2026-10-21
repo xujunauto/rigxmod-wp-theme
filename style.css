@@ -3357,3 +3357,64 @@ button.single_add_to_cart_button {
 .site-footer font font[style*=""vertical-align""] {
     color: inherit !important;
 }
+
+/* ============================================================
+   CART PAGE — full-width layout (v1.5, appended only)
+   Bug: body.woocommerce-cart was capped at 1180px and
+   .entry-content at 860px, so the cart table and the totals
+   panel were narrower than the header / footer containers.
+   Fix: let the cart page use the same container width as the
+   header & footer, and put the totals panel below the cart
+   table at full width (Taobao / Tmall style).
+   ============================================================ */
+body.woocommerce-cart {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Match header / footer horizontal padding so edges line up */
+body.woocommerce-cart #primary > .container {
+    padding-left: var(--rm-container-padding, 16px) !important;
+    padding-right: var(--rm-container-padding, 16px) !important;
+}
+
+/* Release the 860px readable-width cap on the cart page only */
+body.woocommerce-cart .entry-content {
+    max-width: none;
+}
+
+/* Totals panel: full width, directly below the cart table */
+body.woocommerce-cart .cart-collaterals {
+    float: none;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+body.woocommerce-cart .cart-collaterals .cart_totals {
+    float: none;
+    width: 100%;
+    max-width: none;
+}
+body.woocommerce-cart .cart_totals table.shop_table {
+    width: 100%;
+}
+
+/* Checkout button: right aligned, not one huge full-width bar */
+body.woocommerce-cart .cart_totals .wc-proceed-to-checkout {
+    text-align: right;
+}
+body.woocommerce-cart .cart_totals .wc-proceed-to-checkout .checkout-button {
+    display: inline-block;
+    width: auto;
+    min-width: 320px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    body.woocommerce-cart .cart_totals .wc-proceed-to-checkout .checkout-button {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+}
