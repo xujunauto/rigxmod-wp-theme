@@ -4,7 +4,7 @@ Theme URI: https://rigxmod.com
 Author: RIGX MOD
 Author URI: https://rigxmod.com
 Description: AutoZone-inspired e-commerce theme for RIGX MOD off-road parts. Clean, professional, conversion-focused design with Tesla red and Cloudflare orange accents.
-Version: 1.1.6
+Version: 1.1.7
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
@@ -3434,6 +3434,14 @@ body.woocommerce-checkout {
     max-width: none !important;
     margin: 0 !important;
     padding: 0 !important;
+}
+
+/* The checkout <form> also carries the .woocommerce-checkout class, so the
+   old 1180px cap was squeezing it as well. */
+body.woocommerce-checkout form.checkout {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0;
 }
 
 body.woocommerce-checkout .entry-content {
