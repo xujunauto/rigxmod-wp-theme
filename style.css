@@ -4,7 +4,7 @@ Theme URI: https://rigxmod.com
 Author: RIGX MOD
 Author URI: https://rigxmod.com
 Description: AutoZone-inspired e-commerce theme for RIGX MOD off-road parts. Clean, professional, conversion-focused design with Tesla red and Cloudflare orange accents.
-Version: 1.1.4
+Version: 1.1.5
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.0
@@ -3422,4 +3422,37 @@ body.woocommerce-cart .cart_totals .wc-proceed-to-checkout .checkout-button {
         width: 100%;
         min-width: 0;
     }
+}
+
+/* ============================================================
+   CHECKOUT PAGE — same full-width layout as the cart page
+   Same root cause: body was capped at 1180px, .entry-content at
+   860px and the order review block at 460px, so checkout sat
+   narrower than the header / footer containers.
+   ============================================================ */
+body.woocommerce-checkout {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+body.woocommerce-checkout .entry-content {
+    max-width: none;
+}
+
+/* Release the forced narrow columns inside the checkout form */
+body.woocommerce-checkout .woocommerce-billing-fields,
+body.woocommerce-checkout .woocommerce-shipping-fields {
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Order review: full width under the form, like the cart totals */
+body.woocommerce-checkout #order_review,
+body.woocommerce-checkout .woocommerce-checkout-review-order {
+    max-width: none;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
 }
