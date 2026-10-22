@@ -31,7 +31,12 @@ function rigxmod_detect_gtranslate_locale( $locale ) {
     if ( $code === 'zh-cn' || $code === 'zh' ) {
         return 'zh_CN';
     }
-    return $locale;
+    // 一律回退到 en_US，不依赖 WP 的 $locale 全局变量。
+    // 原因：PHP-FPM worker 进程在处理过一次中文请求后，WP 的
+    // $locale 全局变量会被设为 zh_CN 并残留，后续同一个 worker 处理的
+    // 英文请求会被污染（$locale=zh_CN）。这里硬编码返回 en_US 确保
+    // 默认强制英文（符合用户硬约束），且不受进程间残留状态影响。
+    return 'en_US';
 }
 add_filter( 'locale', 'rigxmod_detect_gtranslate_locale', 1 );
 
