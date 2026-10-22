@@ -68,9 +68,9 @@ function rigxmod_zh_bacs_instructions( $instructions, $gateway_id ) {
 银行账号：0200010009200733752
 开户行：中国工商银行北京海淀北太平庄支行
 SWIFT 代码：ICBKCNBJBJM
-银行地址：北京市海淀区北太平庄路 33 号
+银行地址：北京市海淀区北太平庄路33号
 
-重要提示：汇款时请在附言中注明您的订单号，以便我们识别。汇款完成后请将汇款凭证发送至 sales@mail.rigxmod.com。款项确认到账后（通常需要 3-5 个工作日）我们将立即为您处理订单。';
+重要提示：请使用您的订单号作为付款参考。汇款后，请将汇款凭证发送至 sales@rigxmod.com。您的订单将在确认付款后处理（通常需要3-5个工作日）。';
 }
 add_filter( 'woocommerce_gateway_instructions', 'rigxmod_zh_bacs_instructions', 10, 2 );
 
