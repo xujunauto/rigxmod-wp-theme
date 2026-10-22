@@ -10,9 +10,64 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Theme version
-define( 'RIGXMOD_VERSION', '1.1.7' );
+define( 'RIGXMOD_VERSION', '1.1.8' );
 define( 'RIGXMOD_DIR', get_template_directory() );
 define( 'RIGXMOD_URI', get_template_directory_uri() );
+
+/**
+ * GTranslate 用 cookie `gl` 或 URL 参数 `?gl=` 切换前端语言；后端 WP locale
+ * 不会跟着变，WooCommerce 的 MO 翻译文件一直按 en_US 加载导致结账页核心
+ * 字符串（Product / Subtotal / Total / Place order / Shipping 等）全是英文。
+ * 这里挂 `locale` 过滤器，让 WP 按 GTranslate 选择的语言加载翻译。
+ * 必须在 WooCommerce 加载 MO 文件之前生效，所以放在 `load_textdomain` 之前。
+ */
+function rigxmod_detect_gtranslate_locale( $locale ) {
+    $code = '';
+    if ( ! empty( $_GET['gl'] ) ) {
+        $code = strtolower( sanitize_text_field( wp_unslash( $_GET['gl'] ) ) );
+    } elseif ( ! empty( $_COOKIE['gl'] ) ) {
+        $code = strtolower( sanitize_text_field( wp_unslash( $_COOKIE['gl'] ) ) );
+    }
+    if ( $code === 'zh-cn' || $code === 'zh' ) {
+        return 'zh_CN';
+    }
+    return $locale;
+}
+add_filter( 'locale', 'rigxmod_detect_gtranslate_locale', 1 );
+
+/**
+ * BACS 付款方式的 title/description/instructions 是硬编码英文存 DB，
+ * locale 切成 zh_CN 后也不会自动翻。直接用过滤器覆盖成中文。
+ * 只有中文模式下才覆盖，英文模式下保留原设置。
+ */
+function rigxmod_zh_bacs_title( $title, $gateway_id ) {
+    if ( 'bacs' !== $gateway_id ) { return $title; }
+    if ( ! function_exists( 'get_locale' ) || get_locale() !== 'zh_CN' ) { return $title; }
+    return '银行电汇（T/T）';
+}
+add_filter( 'woocommerce_gateway_title', 'rigxmod_zh_bacs_title', 10, 2 );
+
+function rigxmod_zh_bacs_description( $description, $gateway_id ) {
+    if ( 'bacs' !== $gateway_id ) { return $description; }
+    if ( ! function_exists( 'get_locale' ) || get_locale() !== 'zh_CN' ) { return $description; }
+    return '通过国际银行电汇（T/T）支付。无手续费。款项到账后即可为您处理订单。';
+}
+add_filter( 'woocommerce_gateway_description', 'rigxmod_zh_bacs_description', 10, 2 );
+
+function rigxmod_zh_bacs_instructions( $instructions, $gateway_id ) {
+    if ( 'bacs' !== $gateway_id ) { return $instructions; }
+    if ( ! function_exists( 'get_locale' ) || get_locale() !== 'zh_CN' ) { return $instructions; }
+    return '请将订单总金额电汇至以下公司账户：
+
+收款人：北京沫熹科技有限公司
+银行账号：0200010009200733752
+开户行：中国工商银行北京海淀北太平庄支行
+SWIFT 代码：ICBKCNBJBJM
+银行地址：北京市海淀区北太平庄路 33 号
+
+重要提示：汇款时请在附言中注明您的订单号，以便我们识别。汇款完成后请将汇款凭证发送至 sales@mail.rigxmod.com。款项确认到账后（通常需要 3-5 个工作日）我们将立即为您处理订单。';
+}
+add_filter( 'woocommerce_gateway_instructions', 'rigxmod_zh_bacs_instructions', 10, 2 );
 
 /**
  * Theme setup
