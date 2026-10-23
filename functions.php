@@ -798,6 +798,11 @@ add_action( 'wp_footer', function () {
     if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
         return;
     }
+    if ( ! function_exists( 'money' ) ) {
+        function money( $v ) {
+            return round( (float) $v, 2 );
+        }
+    }
     ?>
     <script>
     (function(){
