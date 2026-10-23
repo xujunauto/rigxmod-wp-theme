@@ -966,11 +966,13 @@ add_action( 'wp_footer', function () {
 }, 100 );
 
 /* ============================================================
- * RigxMod — Force Rank Math term-meta titles on product_cat
- * archives (RM 1.0.280 ignores per-term rank_math_title here).
+ * RigxMod — Force Rank Math per-item meta titles where RM
+ * 1.0.280 ignores them: product_cat archives + WooCommerce
+ * cart / checkout / my-account / shop pages.
  * Priority 20 runs after Rank Math's pre_get_document_title (15).
  * ============================================================ */
 add_filter( 'pre_get_document_title', function ( $title ) {
+    // Product category archives — read per-term meta.
     if ( is_product_category() ) {
         $obj = get_queried_object();
         if ( $obj instanceof WP_Term ) {
@@ -979,6 +981,21 @@ add_filter( 'pre_get_document_title', function ( $title ) {
                 return $t;
             }
         }
+        return $title;
     }
+
+    // WooCommerce cart / checkout / my-account / shop — read per-post meta.
+    if (
+        function_exists( 'is_cart' ) && ( is_cart() || is_checkout() || is_account_page() || is_shop() )
+    ) {
+        $pid = wc_get_page_id( is_cart() ? 'cart' : ( is_checkout() ? 'checkout' : ( is_account_page() ? 'myaccount' : 'shop' ) ) );
+        if ( $pid > 0 ) {
+            $t = get_post_meta( $pid, 'rank_math_title', true );
+            if ( is_string( $t ) && '' !== trim( $t ) ) {
+                return $t;
+            }
+        }
+    }
+
     return $title;
 }, 20 );
