@@ -742,23 +742,243 @@ function rigxmod_output_meta_description() {
 }
 
 /* ============================================================
- * RigxMod — Placeholder slots for external tracking code
- * These are intentionally empty. Fill them when you receive your:
- *   1. GA4 measurement ID  (G-XXXXXXXXXX)
- *   2. Google Search Console verification meta tag
+ * RigxMod — GA4 measurement (G-ND4Z7YNG1Z)
+ * Consent Mode v2: EU/UK visitors default to denied until they
+ * accept the cookie banner; everyone else is granted.
  * ============================================================ */
-add_action( 'wp_head', function () {
-    // Google Search Console — paste <meta name="google-site-verification" content="..."> here
-    // echo '<meta name="google-site-verification" content="REPLACE_WITH_YOUR_VERIFICATION_CODE">' . "\n";
+if ( ! defined( 'RIGXMOD_GA4_ID' ) ) {
+    define( 'RIGXMOD_GA4_ID', 'G-ND4Z7YNG1Z' );
+}
 
-    // Google Analytics 4 — replace G-XXXXXXXXXX with your measurement ID
-    // echo "<!-- Google tag (gtag.js) -->
-    // <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    // <script>
-    //   window.dataLayer = window.dataLayer || [];
-    //   function gtag(){dataLayer.push(arguments);}
-    //   gtag('js', new Date());
-    //   gtag('config', 'G-XXXXXXXXXX');
-    // </script>
-    // " . "\n";
+/**
+ * Countries where consent must be collected (EU/EEA + UK + CH).
+ */
+if ( ! function_exists( 'rigxmod_ga4_needs_consent' ) ) {
+    function rigxmod_ga4_needs_consent() {
+        $eu_uk = array(
+            'AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR',
+            'HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK',
+            'SI','ES','SE','GB','IS','LI','NO','CH',
+        );
+        $country = isset( $_SERVER['HTTP_CF_IPCOUNTRY'] ) ? strtoupper( $_SERVER['HTTP_CF_IPCOUNTRY'] ) : '';
+        return ( '' !== $country ) && in_array( $country, $eu_uk, true );
+    }
+}
+
+add_action( 'wp_head', function () {
+    if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
+        return; // Do not track admins.
+    }
+    $needs_consent = rigxmod_ga4_needs_consent();
+    $granted       = $needs_consent ? 'denied' : 'granted';
+    ?>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?php echo esc_attr( RIGXMOD_GA4_ID ); ?>"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+        'ad_storage': '<?php echo esc_js( $granted ); ?>',
+        'ad_user_data': '<?php echo esc_js( $granted ); ?>',
+        'ad_personalization': '<?php echo esc_js( $granted ); ?>',
+        'analytics_storage': '<?php echo esc_js( $granted ); ?>',
+        'wait_for_update': 500
+    });
+    gtag('js', new Date());
+    gtag('config', '<?php echo esc_attr( RIGXMOD_GA4_ID ); ?>');
+    window.rigxmodNeedsConsent = <?php echo $needs_consent ? 'true' : 'false'; ?>;
+    </script>
+    <?php
 }, 5 );
+
+/* ============================================================
+ * RigxMod — GA4 WooCommerce conversion events
+ * view_item / add_to_cart / begin_checkout / purchase
+ * ============================================================ */
+add_action( 'wp_footer', function () {
+    if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
+        return;
+    }
+    ?>
+    <script>
+    (function(){
+        window.rigxLastViewItem = null;
+
+        function itemsToGA(items){
+            return items.map(function(it){
+                return { item_id: it.id, item_name: it.name, item_category: it.cat || '', price: it.price, quantity: it.qty || 1 };
+            });
+        }
+        function money(v){
+            return Math.round(parseFloat(v || 0) * 100) / 100;
+        }
+
+        /* --- view_item on singular product pages --- */
+        <?php if ( is_singular( 'product' ) ) :
+            $p = wc_get_product( get_the_ID() );
+            if ( $p ) :
+                $cats = wp_get_post_terms( $p->get_id(), 'product_cat', array( 'fields' => 'names' ) );
+                $vitem = array(
+                    'id'    => (string) ( $p->get_sku() ? $p->get_sku() : $p->get_id() ),
+                    'name'  => $p->get_name(),
+                    'cat'   => ! empty( $cats ) ? $cats[0] : '',
+                    'price' => money( $p->get_price() ),
+                    'qty'   => 1,
+                );
+                $vitem_json = wp_json_encode( $vitem );
+                ?>
+        var __vi = <?php echo $vitem_json; ?>;
+        window.rigxLastViewItem = __vi;
+        gtag('event', 'view_item', {
+            currency: <?php echo wp_json_encode( get_woocommerce_currency() ); ?>,
+            value: __vi.price,
+            items: itemsToGA([__vi])
+        });
+            <?php endif; ?>
+        <?php endif; ?>
+
+        /* --- begin_checkout on checkout page --- */
+        <?php if ( function_exists( 'is_checkout' ) && is_checkout() && ! is_order_received_page() ) :
+            $cart_total = WC()->cart ? money( WC()->cart->get_total( 'edit' ) ) : 0;
+            $cart_items = array();
+            if ( WC()->cart ) {
+                foreach ( WC()->cart->get_cart() as $ci ) {
+                    $cp  = $ci['data'];
+                    $cart_items[] = array(
+                        'id'    => (string) ( $cp->get_sku() ? $cp->get_sku() : $cp->get_id() ),
+                        'name'  => $cp->get_name(),
+                        'price' => money( $cp->get_price() ),
+                        'qty'   => $ci['quantity'],
+                    );
+                }
+            }
+            ?>
+        gtag('event', 'begin_checkout', {
+            currency: <?php echo wp_json_encode( get_woocommerce_currency() ); ?>,
+            value: <?php echo wp_json_encode( $cart_total ); ?>,
+            items: itemsToGA(<?php echo wp_json_encode( $cart_items ); ?>)
+        });
+        <?php endif; ?>
+
+        /* --- purchase on order-received page (once per order) --- */
+        <?php if ( function_exists( 'is_order_received_page' ) && is_order_received_page() ) :
+            $order_id = absint( get_query_var( 'order-received' ) );
+            if ( $order_id ) :
+                $order = wc_get_order( $order_id );
+                if ( $order && ! $order->get_meta( '_rigx_ga_purchase_sent' ) ) :
+                    $ord_items = array();
+                    foreach ( $order->get_items() as $oi ) {
+                        $op = $oi->get_product();
+                        $ord_items[] = array(
+                            'id'    => (string) ( $op && $op->get_sku() ? $op->get_sku() : $oi->get_product_id() ),
+                            'name'  => $oi->get_name(),
+                            'price' => $op ? money( $op->get_price() ) : 0,
+                            'qty'   => $oi->get_quantity(),
+                        );
+                    }
+                    $order->update_meta_data( '_rigx_ga_purchase_sent', gmdate( 'c' ) );
+                    $order->save();
+            ?>
+        gtag('event', 'purchase', {
+            transaction_id: <?php echo wp_json_encode( (string) $order->get_order_number() ); ?>,
+            currency: <?php echo wp_json_encode( $order->get_currency() ); ?>,
+            value: <?php echo wp_json_encode( money( $order->get_total() ) ); ?>,
+            tax: <?php echo wp_json_encode( money( $order->get_total_tax() ) ); ?>,
+            shipping: <?php echo wp_json_encode( money( $order->get_shipping_total() ) ); ?>,
+            items: itemsToGA(<?php echo wp_json_encode( $ord_items ); ?>)
+        });
+                <?php endif; ?>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        /* --- add_to_cart listener (jQuery, shipped with WooCommerce) --- */
+        if ( window.jQuery ) {
+            jQuery(document.body).on('added_to_cart', function(){
+                if ( window.rigxLastViewItem ) {
+                    gtag('event', 'add_to_cart', {
+                        currency: <?php echo wp_json_encode( get_woocommerce_currency() ); ?>,
+                        value: window.rigxLastViewItem.price,
+                        items: itemsToGA([window.rigxLastViewItem])
+                    });
+                } else {
+                    gtag('event', 'add_to_cart');
+                }
+            });
+        }
+    })();
+    </script>
+    <?php
+}, 99 );
+
+/* ============================================================
+ * RigxMod — Cookie consent banner (EU/UK only, minimal)
+ * ============================================================ */
+add_action( 'wp_footer', function () {
+    if ( ! rigxmod_ga4_needs_consent() ) {
+        return; // Banner only where consent is legally required.
+    }
+    $accepted = isset( $_COOKIE['rigx_consent'] ) && 'yes' === $_COOKIE['rigx_consent'];
+    if ( $accepted ) {
+        return;
+    }
+    ?>
+    <div id="rigx-consent-bar" role="dialog" aria-live="polite" aria-label="Cookie consent">
+        <span class="rigx-consent-text">We use cookies to analyze site traffic and improve your experience. You can accept or decline analytics cookies.</span>
+        <span class="rigx-consent-actions">
+            <button type="button" id="rigx-consent-accept" class="rigx-consent-btn rigx-consent-accept">Accept</button>
+            <button type="button" id="rigx-consent-decline" class="rigx-consent-btn rigx-consent-decline">Decline</button>
+        </span>
+    </div>
+    <script>
+    (function(){
+        if ( /(?:^|;\s*)rigx_consent=(yes|no)/.test(document.cookie) ) {
+            var b = document.getElementById('rigx-consent-bar');
+            if (b) b.parentNode.removeChild(b);
+            return;
+        }
+        function setConsent(val){
+            document.cookie = 'rigx_consent=' + val + '; path=/; max-age=' + (60*60*24*180) + '; SameSite=Lax';
+            var b = document.getElementById('rigx-consent-bar');
+            if (b) b.parentNode.removeChild(b);
+            if ( val === 'yes' ) {
+                gtag('consent', 'update', { 'ad_storage':'granted','ad_user_data':'granted','ad_personalization':'granted','analytics_storage':'granted' });
+            } else {
+                gtag('consent', 'update', { 'ad_storage':'denied','ad_user_data':'denied','ad_personalization':'denied','analytics_storage':'denied' });
+            }
+        }
+        var a = document.getElementById('rigx-consent-accept');
+        var d = document.getElementById('rigx-consent-decline');
+        if (a) a.addEventListener('click', function(){ setConsent('yes'); });
+        if (d) d.addEventListener('click', function(){ setConsent('no'); });
+    })();
+    </script>
+    <style>
+    #rigx-consent-bar{position:fixed;left:0;right:0;bottom:0;z-index:99999;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 20px;background:#111827;color:#f9fafb;font-size:14px;line-height:1.5;box-shadow:0 -2px 10px rgba(0,0,0,.25)}
+    .rigx-consent-text{flex:1 1 320px;min-width:260px}
+    .rigx-consent-actions{display:flex;gap:10px}
+    .rigx-consent-btn{padding:8px 22px;border-radius:4px;border:1px solid transparent;font-size:14px;cursor:pointer}
+    .rigx-consent-accept{background:#f59e0b;color:#111827;border-color:#f59e0b}
+    .rigx-consent-accept:hover{background:#fbbf24}
+    .rigx-consent-decline{background:transparent;color:#f9fafb;border-color:#6b7280}
+    .rigx-consent-decline:hover{border-color:#9ca3af}
+    @media(max-width:600px){#rigx-consent-bar{font-size:13px;padding:10px 14px}}
+    </style>
+    <?php
+}, 100 );
+
+/* ============================================================
+ * RigxMod — Force Rank Math term-meta titles on product_cat
+ * archives (RM 1.0.280 ignores per-term rank_math_title here).
+ * Priority 20 runs after Rank Math's pre_get_document_title (15).
+ * ============================================================ */
+add_filter( 'pre_get_document_title', function ( $title ) {
+    if ( is_product_category() ) {
+        $obj = get_queried_object();
+        if ( $obj instanceof WP_Term ) {
+            $t = get_term_meta( $obj->term_id, 'rank_math_title', true );
+            if ( is_string( $t ) && '' !== trim( $t ) ) {
+                return $t;
+            }
+        }
+    }
+    return $title;
+}, 20 );
