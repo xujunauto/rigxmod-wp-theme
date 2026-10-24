@@ -166,10 +166,9 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
                                 <?php echo esc_html( $nl_message ); ?>
                             </p>
                         <?php endif; ?>
-                        <form method="post" action="" style="display:flex;flex-wrap:wrap;gap:8px;">
+                        <form method="post" action="" style="display:flex;gap:8px;">
                             <?php wp_nonce_field( 'rigxmod_newsletter', 'rigxmod_nl_nonce' ); ?>
                             <input type="hidden" name="rigxmod_nl_ts" value="<?php echo (int) time(); ?>">
-                            <div style="flex-basis:100%;" class="cf-turnstile" data-sitekey="0x4AAAAAAFjl7dxC_ppS4QYT" data-theme="dark" data-size="flexible" data-appearance="interaction-only" data-language="auto"></div>
                             <span style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
                                 <label for="rigxmod_nl_website"><?php esc_html_e( 'Website', 'rigxmod-autozone' ); ?></label>
                                 <input type="text" id="rigxmod_nl_website" name="rigxmod_nl_website" value="" tabindex="-1" autocomplete="off">

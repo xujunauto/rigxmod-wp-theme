@@ -225,7 +225,7 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
                     <form method="post" action="" style="display:flex;flex-direction:column;gap:20px;">
                         <?php wp_nonce_field( 'rigxmod_contact_form', 'rigxmod_cf_nonce' ); ?>
                         <input type="hidden" name="rigxmod_cf_ts" value="<?php echo (int) time(); ?>">
-                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAFjl7dxC_ppS4QYT" data-theme="light" data-size="flexible" data-appearance="interaction-only" data-language="auto"></div>
+                        <div class="cf-turnstile" style="height:0;overflow:hidden;" data-sitekey="0x4AAAAAAFjl7dxC_ppS4QYT" data-theme="light" data-size="flexible" data-appearance="interaction-only" data-language="auto"></div>
                         <div style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
                             <label for="rigxmod_cf_website"><?php esc_html_e( 'Website', 'rigxmod-autozone' ); ?></label>
                             <input type="text" id="rigxmod_cf_website" name="rigxmod_cf_website" value="" tabindex="-1" autocomplete="off">
