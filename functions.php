@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Theme version
-define( 'RIGXMOD_VERSION', '1.2.0' );
+define( 'RIGXMOD_VERSION', '1.2.1' );
 define( 'RIGXMOD_DIR', get_template_directory() );
 define( 'RIGXMOD_URI', get_template_directory_uri() );
 
@@ -1032,6 +1032,8 @@ add_action( 'wp_footer', function () {
     (function(){
         var RULES = [
             [/魔溪|莫西|摩西/g, '沫熹'],
+            [/白家团/g, '白家疃'],
+            [/上水园/g, '尚水园'],
             [/一般服务|通用服务/g, '综合服务'],
             [/工程支持/g, '技术支持'],
             [/博客/g, '新闻资讯']

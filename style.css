@@ -2408,12 +2408,18 @@ body.page .rm-faq {
    because its content grid is full-width too. */
 body.page .page-header .container {
     max-width: 1180px;
+    padding-left: 0;
+    padding-right: 0;
 }
 body.page-template-page-contact .page-header .container {
     max-width: var(--rm-container-max);
+    padding-left: 16px;
+    padding-right: 16px;
 }
 body.single-post .page-header .container {
     max-width: 800px;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* Intro lead paragraph */
