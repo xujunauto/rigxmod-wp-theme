@@ -2384,6 +2384,23 @@ textarea.form-control {
     max-width: 860px;
 }
 
+/* Content pages (About / policies / FAQ / blog posts) use the full container
+   width instead of the narrow 860px column, centred — matches the header and
+   footer width and removes the empty gutter on the right. */
+body.page .entry-content,
+body.single-post .entry-content {
+    max-width: 1180px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* The inner page wrappers must stop capping the width as well. */
+body.page .about-page,
+body.page .policy-page,
+body.page .rm-faq {
+    max-width: none;
+}
+
 /* Intro lead paragraph */
 .rm-lead {
     font-size: 18px;
