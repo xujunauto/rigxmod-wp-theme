@@ -1089,3 +1089,57 @@ add_action( 'wp_footer', function () {
     </script>
     <?php
 }, 999 );
+
+/* ============================================================
+ * RigxMod — keep the language selector in sync with the page.
+ * GTranslate renders a <select class="gt_selector"> and preselects the
+ * stored language. When Google's translation service cannot be reached
+ * (mainland China), the page stays in English while the selector still
+ * says e.g. 简体中文. If the content was not actually translated, reset
+ * the selector to English and drop the stored language.
+ * ============================================================ */
+add_action( 'wp_footer', function () {
+    ?>
+    <script>
+    (function(){
+        var NON_LATIN = {
+            'zh-cn': '\\u4e00-\\u9fa5',
+            'zh-tw': '\\u4e00-\\u9fa5',
+            'ja': '\\u3040-\\u30ff\\u4e00-\\u9fa5',
+            'ko': '\\uac00-\\ud7af',
+            'ru': '\\u0400-\\u04ff',
+            'ar': '\\u0600-\\u06ff'
+        };
+        function targetLang(){
+            var s = document.querySelector( '.header-gtranslate select.gt_selector' );
+            if ( ! s || ! s.value ) { return ''; }
+            return ( s.value.split( '|' )[1] || '' ).toLowerCase();
+        }
+        function isTranslated( code ){
+            var range = NON_LATIN[ code ];
+            if ( ! range ) { return true; }
+            var root = document.querySelector( '.site-content, main, #content' ) || document.body;
+            if ( ! root ) { return true; }
+            var hits = ( root.innerText || '' ).match( new RegExp( '[' + range + ']', 'g' ) );
+            return !! hits && hits.length > 25;
+        }
+        function resetToEnglish(){
+            var s = document.querySelector( '.header-gtranslate select.gt_selector' );
+            if ( s ) { s.value = 'en|en'; }
+            document.documentElement.lang = 'en';
+            try {
+                document.cookie = 'gl=; path=/; max-age=0';
+                if ( /[?&]gl=/.test( location.search ) ) {
+                    var q = location.search.replace( /([?&])gl=[^&]*/g, '$1' ).replace( /[?&]$/, '' );
+                    history.replaceState( null, '', location.pathname + ( q === '?' ? '' : q ) + location.hash );
+                }
+            } catch ( e ) {}
+        }
+        setTimeout( function(){
+            var code = targetLang();
+            if ( code && code !== 'en' && ! isTranslated( code ) ) { resetToEnglish(); }
+        }, 7000 );
+    })();
+    </script>
+    <?php
+}, 1000 );

@@ -2424,7 +2424,7 @@ body.single-post .page-header .container {
 
 /* Intro lead paragraph */
 .rm-lead {
-    font-size: 18px;
+    font-size: 14px;
     line-height: 1.75;
     color: #4b5563;
     margin: 8px 0 28px;
@@ -2683,7 +2683,7 @@ details.rm-faq-item[open] summary::after {
     }
 
     .rm-lead {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .entry-content h2,
