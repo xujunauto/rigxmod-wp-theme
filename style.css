@@ -2986,6 +2986,40 @@ details.rm-faq-item[open] summary::after {
 }
 
 /* ============================================================
+   Single post: post-navigation + comment respond spacing.
+   Theme has no comments.php, so WP renders the fallback markup
+   (#respond wrapper, no .comments-area) — the .comments-area
+   rules above never match single posts. Appended only.
+   ============================================================ */
+.post-navigation {
+    margin-top: 48px;
+}
+.post-navigation .nav-previous,
+.post-navigation .nav-next {
+    line-height: 1.8;
+}
+.post-navigation .nav-next {
+    margin-top: 14px;
+}
+.comment-respond {
+    margin-top: 56px;
+    padding-top: 40px;
+    border-top: 1px solid #eceef1;
+}
+.comment-respond .comment-reply-title {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #171a1d;
+    margin: 0 0 6px;
+}
+@media (max-width: 768px) {
+    .comment-respond .comment-reply-title {
+        font-size: 21px;
+    }
+}
+
+/* ============================================================
    Hero full-width slider (Tesla-inspired, v1.3)
    Appended only: no existing selectors modified.
    ============================================================ */

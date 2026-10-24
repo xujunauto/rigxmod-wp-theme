@@ -139,7 +139,7 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
                             <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'track-order' ) ) ?: '#' ); ?>"><?php esc_html_e( 'Track Order', 'rigxmod-autozone' ); ?></a></li>
                             <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'contact' ) ) ?: '#' ); ?>"><?php esc_html_e( 'Contact Us', 'rigxmod-autozone' ); ?></a></li>
                             <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'faqs' ) ) ?: '#' ); ?>"><?php esc_html_e( 'FAQs', 'rigxmod-autozone' ); ?></a></li>
-                            <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'blog' ) ) ?: '#' ); ?>"><?php esc_html_e( 'Blog', 'rigxmod-autozone' ); ?></a></li>
+                            <li><a href="<?php echo esc_url( get_permalink( get_page_by_path( 'blog' ) ) ?: '#' ); ?>"><?php esc_html_e( 'News', 'rigxmod-autozone' ); ?></a></li>
                         </ul>
                     </div>
 
