@@ -14,11 +14,32 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
         $nl_message = __( 'Security check failed. Please try again.', 'rigxmod-autozone' );
         $nl_type    = 'error';
     } else {
-        // Anti-spam: honeypot field + minimum fill time (3s). Bots get a fake
-        // success message so they don't adapt; nothing is stored.
-        $nl_hp = isset( $_POST['rigxmod_nl_website'] ) ? trim( (string) wp_unslash( $_POST['rigxmod_nl_website'] ) ) : '';
-        $nl_ts = isset( $_POST['rigxmod_nl_ts'] ) ? (int) $_POST['rigxmod_nl_ts'] : 0;
-        if ( '' !== $nl_hp || ( $nl_ts > 0 && time() - $nl_ts < 3 ) ) {
+        // Anti-spam: honeypot + minimum fill time (3s) + Cloudflare Turnstile.
+        // Bots get a fake success message so they don't adapt; nothing is stored.
+        $nl_hp   = isset( $_POST['rigxmod_nl_website'] ) ? trim( (string) wp_unslash( $_POST['rigxmod_nl_website'] ) ) : '';
+        $nl_ts   = isset( $_POST['rigxmod_nl_ts'] ) ? (int) $_POST['rigxmod_nl_ts'] : 0;
+        $nl_spam = ( '' !== $nl_hp || ( $nl_ts > 0 && time() - $nl_ts < 3 ) );
+        if ( ! $nl_spam ) {
+            $nl_token  = isset( $_POST['cf-turnstile-response'] ) ? trim( (string) wp_unslash( $_POST['cf-turnstile-response'] ) ) : '';
+            $nl_secret = (string) get_option( 'rigxmod_turnstile_secret', '' );
+            if ( '' !== $nl_token && '' !== $nl_secret ) {
+                $nl_verify = wp_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
+                    'timeout' => 10,
+                    'body'    => array(
+                        'secret'   => $nl_secret,
+                        'response' => $nl_token,
+                        'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
+                    ),
+                ) );
+                if ( ! is_wp_error( $nl_verify ) ) {
+                    $nl_body = json_decode( wp_remote_retrieve_body( $nl_verify ), true );
+                    if ( empty( $nl_body['success'] ) ) {
+                        $nl_spam = true;
+                    }
+                }
+            }
+        }
+        if ( $nl_spam ) {
             $nl_message = __( 'Successfully subscribed! Watch for exclusive deals in your inbox.', 'rigxmod-autozone' );
             $nl_type    = 'success';
         } else {
@@ -145,9 +166,10 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
                                 <?php echo esc_html( $nl_message ); ?>
                             </p>
                         <?php endif; ?>
-                        <form method="post" action="" style="display:flex;gap:8px;">
+                        <form method="post" action="" style="display:flex;flex-wrap:wrap;gap:8px;">
                             <?php wp_nonce_field( 'rigxmod_newsletter', 'rigxmod_nl_nonce' ); ?>
                             <input type="hidden" name="rigxmod_nl_ts" value="<?php echo (int) time(); ?>">
+                            <div style="flex-basis:100%;" class="cf-turnstile" data-sitekey="0x4AAAAAAFjl7dxC_ppS4QYT" data-theme="dark" data-size="flexible" data-appearance="interaction-only" data-language="auto"></div>
                             <span style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
                                 <label for="rigxmod_nl_website"><?php esc_html_e( 'Website', 'rigxmod-autozone' ); ?></label>
                                 <input type="text" id="rigxmod_nl_website" name="rigxmod_nl_website" value="" tabindex="-1" autocomplete="off">
@@ -179,6 +201,8 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
     </footer><!-- #colophon -->
 
 </div><!-- #page -->
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <?php wp_footer(); ?>
 

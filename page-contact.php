@@ -18,11 +18,34 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
         $cf_message = __( 'Security check failed. Please try again.', 'rigxmod-autozone' );
         $cf_type    = 'error';
     } else {
-        // Anti-spam: honeypot field + minimum fill time (3s). Bots get a fake
-        // success message so they don't adapt; nothing is stored or notified.
-        $cf_hp = isset( $_POST['rigxmod_cf_website'] ) ? trim( (string) wp_unslash( $_POST['rigxmod_cf_website'] ) ) : '';
-        $cf_ts = isset( $_POST['rigxmod_cf_ts'] ) ? (int) $_POST['rigxmod_cf_ts'] : 0;
-        if ( '' !== $cf_hp || ( $cf_ts > 0 && time() - $cf_ts < 3 ) ) {
+        // Anti-spam: honeypot + minimum fill time (3s) + Cloudflare Turnstile.
+        // Bots get a fake success message so they don't adapt; nothing is stored.
+        $cf_hp     = isset( $_POST['rigxmod_cf_website'] ) ? trim( (string) wp_unslash( $_POST['rigxmod_cf_website'] ) ) : '';
+        $cf_ts     = isset( $_POST['rigxmod_cf_ts'] ) ? (int) $_POST['rigxmod_cf_ts'] : 0;
+        $cf_spam   = ( '' !== $cf_hp || ( $cf_ts > 0 && time() - $cf_ts < 3 ) );
+        if ( ! $cf_spam ) {
+            $cf_token  = isset( $_POST['cf-turnstile-response'] ) ? trim( (string) wp_unslash( $_POST['cf-turnstile-response'] ) ) : '';
+            $cf_secret = (string) get_option( 'rigxmod_turnstile_secret', '' );
+            // Only verify when both a token and a secret exist, so a visitor whose
+            // browser failed to load the Turnstile script is never blocked.
+            if ( '' !== $cf_token && '' !== $cf_secret ) {
+                $cf_verify = wp_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
+                    'timeout' => 10,
+                    'body'    => array(
+                        'secret'   => $cf_secret,
+                        'response' => $cf_token,
+                        'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
+                    ),
+                ) );
+                if ( ! is_wp_error( $cf_verify ) ) {
+                    $cf_body = json_decode( wp_remote_retrieve_body( $cf_verify ), true );
+                    if ( empty( $cf_body['success'] ) ) {
+                        $cf_spam = true;
+                    }
+                }
+            }
+        }
+        if ( $cf_spam ) {
             $cf_message = __( 'Thank you! Your message has been sent. We will get back to you within 24 hours.', 'rigxmod-autozone' );
             $cf_type    = 'success';
         } else {
@@ -202,6 +225,7 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
                     <form method="post" action="" style="display:flex;flex-direction:column;gap:20px;">
                         <?php wp_nonce_field( 'rigxmod_contact_form', 'rigxmod_cf_nonce' ); ?>
                         <input type="hidden" name="rigxmod_cf_ts" value="<?php echo (int) time(); ?>">
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAFjl7dxC_ppS4QYT" data-theme="light" data-size="flexible" data-appearance="interaction-only" data-language="auto"></div>
                         <div style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
                             <label for="rigxmod_cf_website"><?php esc_html_e( 'Website', 'rigxmod-autozone' ); ?></label>
                             <input type="text" id="rigxmod_cf_website" name="rigxmod_cf_website" value="" tabindex="-1" autocomplete="off">
