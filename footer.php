@@ -14,6 +14,14 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
         $nl_message = __( 'Security check failed. Please try again.', 'rigxmod-autozone' );
         $nl_type    = 'error';
     } else {
+        // Anti-spam: honeypot field + minimum fill time (3s). Bots get a fake
+        // success message so they don't adapt; nothing is stored.
+        $nl_hp = isset( $_POST['rigxmod_nl_website'] ) ? trim( (string) wp_unslash( $_POST['rigxmod_nl_website'] ) ) : '';
+        $nl_ts = isset( $_POST['rigxmod_nl_ts'] ) ? (int) $_POST['rigxmod_nl_ts'] : 0;
+        if ( '' !== $nl_hp || ( $nl_ts > 0 && time() - $nl_ts < 3 ) ) {
+            $nl_message = __( 'Successfully subscribed! Watch for exclusive deals in your inbox.', 'rigxmod-autozone' );
+            $nl_type    = 'success';
+        } else {
         $nl_email = sanitize_email( wp_unslash( $_POST['rigxmod_nl_email'] ) );
         if ( ! is_email( $nl_email ) ) {
             $nl_message = __( 'Please enter a valid email address.', 'rigxmod-autozone' );
@@ -29,6 +37,7 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
                 $nl_message = __( 'Successfully subscribed! Watch for exclusive deals in your inbox.', 'rigxmod-autozone' );
                 $nl_type    = 'success';
             }
+        }
         }
     }
 }
@@ -138,6 +147,11 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
                         <?php endif; ?>
                         <form method="post" action="" style="display:flex;gap:8px;">
                             <?php wp_nonce_field( 'rigxmod_newsletter', 'rigxmod_nl_nonce' ); ?>
+                            <input type="hidden" name="rigxmod_nl_ts" value="<?php echo (int) time(); ?>">
+                            <span style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+                                <label for="rigxmod_nl_website"><?php esc_html_e( 'Website', 'rigxmod-autozone' ); ?></label>
+                                <input type="text" id="rigxmod_nl_website" name="rigxmod_nl_website" value="" tabindex="-1" autocomplete="off">
+                            </span>
                             <input type="email" name="rigxmod_nl_email" placeholder="<?php esc_attr_e( 'Your email', 'rigxmod-autozone' ); ?>" required style="flex:1;padding:10px 12px;border:none;border-radius:4px;font-size:13px;">
                             <button type="submit" style="padding:10px 16px;background:#E31937;color:#fff;border:none;border-radius:4px;font-weight:600;cursor:pointer;font-size:13px;">
                                 <?php esc_html_e( 'Join', 'rigxmod-autozone' ); ?>

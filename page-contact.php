@@ -18,6 +18,14 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
         $cf_message = __( 'Security check failed. Please try again.', 'rigxmod-autozone' );
         $cf_type    = 'error';
     } else {
+        // Anti-spam: honeypot field + minimum fill time (3s). Bots get a fake
+        // success message so they don't adapt; nothing is stored or notified.
+        $cf_hp = isset( $_POST['rigxmod_cf_website'] ) ? trim( (string) wp_unslash( $_POST['rigxmod_cf_website'] ) ) : '';
+        $cf_ts = isset( $_POST['rigxmod_cf_ts'] ) ? (int) $_POST['rigxmod_cf_ts'] : 0;
+        if ( '' !== $cf_hp || ( $cf_ts > 0 && time() - $cf_ts < 3 ) ) {
+            $cf_message = __( 'Thank you! Your message has been sent. We will get back to you within 24 hours.', 'rigxmod-autozone' );
+            $cf_type    = 'success';
+        } else {
         $cf_name    = sanitize_text_field( wp_unslash( $_POST['rigxmod_cf_name'] ?? '' ) );
         $cf_email   = sanitize_email( wp_unslash( $_POST['rigxmod_cf_email'] ?? '' ) );
         $cf_subject = sanitize_text_field( wp_unslash( $_POST['rigxmod_cf_subject'] ?? '' ) );
@@ -84,6 +92,7 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
 
             $cf_message = __( 'Thank you! Your message has been sent. We will get back to you within 24 hours.', 'rigxmod-autozone' );
             $cf_type    = 'success';
+        }
         }
     }
 }
@@ -192,6 +201,11 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
 
                     <form method="post" action="" style="display:flex;flex-direction:column;gap:20px;">
                         <?php wp_nonce_field( 'rigxmod_contact_form', 'rigxmod_cf_nonce' ); ?>
+                        <input type="hidden" name="rigxmod_cf_ts" value="<?php echo (int) time(); ?>">
+                        <div style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+                            <label for="rigxmod_cf_website"><?php esc_html_e( 'Website', 'rigxmod-autozone' ); ?></label>
+                            <input type="text" id="rigxmod_cf_website" name="rigxmod_cf_website" value="" tabindex="-1" autocomplete="off">
+                        </div>
 
                         <div>
                             <label for="rigxmod_cf_name" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#222;"><?php esc_html_e( 'Your Name *', 'rigxmod-autozone' ); ?></label>
