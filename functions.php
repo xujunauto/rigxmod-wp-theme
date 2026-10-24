@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Theme version
-define( 'RIGXMOD_VERSION', '1.1.9' );
+define( 'RIGXMOD_VERSION', '1.2.0' );
 define( 'RIGXMOD_DIR', get_template_directory() );
 define( 'RIGXMOD_URI', get_template_directory_uri() );
 
@@ -1004,3 +1004,74 @@ add_filter( 'pre_get_document_title', function ( $title ) {
 
     return $title;
 }, 20 );
+
+/* ============================================================
+ * RigxMod — Chinese-mode copy corrections.
+ * GTranslate machine translation produces a few wrong terms:
+ *   北京魔溪/莫西/摩西科技有限公司 -> 北京沫熹科技有限公司
+ *   一般服务/通用服务 -> 综合服务
+ *   工程支持 -> 技术支持
+ *   博客 -> 新闻资讯
+ * This footer script runs only in Chinese mode (gl=zh / zh-cn via
+ * URL param or cookie) and rewrites those terms in place, watching
+ * for late-injected nodes via MutationObserver. Replacements never
+ * reintroduce a source term, so the observer cannot loop.
+ * ============================================================ */
+add_action( 'wp_footer', function () {
+    $gl = '';
+    if ( ! empty( $_GET['gl'] ) ) {
+        $gl = strtolower( sanitize_text_field( wp_unslash( $_GET['gl'] ) ) );
+    } elseif ( ! empty( $_COOKIE['gl'] ) ) {
+        $gl = strtolower( sanitize_text_field( wp_unslash( $_COOKIE['gl'] ) ) );
+    }
+    if ( 'zh-cn' !== $gl && 'zh' !== $gl ) {
+        return;
+    }
+    ?>
+    <script>
+    (function(){
+        var RULES = [
+            [/魔溪|莫西|摩西/g, '沫熹'],
+            [/一般服务|通用服务/g, '综合服务'],
+            [/工程支持/g, '技术支持'],
+            [/博客/g, '新闻资讯']
+        ];
+        function fixText(s){
+            for ( var i = 0; i < RULES.length; i++ ) {
+                if ( RULES[i][0].test(s) ) {
+                    s = s.replace( RULES[i][0], RULES[i][1] );
+                }
+            }
+            return s;
+        }
+        function walk(root){
+            var w = document.createTreeWalker( root, NodeFilter.SHOW_TEXT, null );
+            var n;
+            while ( ( n = w.nextNode() ) ) {
+                var t = fixText( n.nodeValue );
+                if ( t !== n.nodeValue ) { n.nodeValue = t; }
+            }
+        }
+        if ( document.body ) { walk( document.body ); }
+        var mo = new MutationObserver( function( mutations ){
+            mutations.forEach( function( m ){
+                if ( m.type === 'characterData' ) {
+                    var t = fixText( m.target.nodeValue );
+                    if ( t !== m.target.nodeValue ) { m.target.nodeValue = t; }
+                    return;
+                }
+                m.addedNodes.forEach( function( node ){
+                    if ( node.nodeType === 3 ) {
+                        var t = fixText( node.nodeValue );
+                        if ( t !== node.nodeValue ) { node.nodeValue = t; }
+                    } else if ( node.nodeType === 1 ) {
+                        walk( node );
+                    }
+                } );
+            } );
+        } );
+        mo.observe( document.documentElement, { childList:true, subtree:true, characterData:true } );
+    })();
+    </script>
+    <?php
+}, 999 );

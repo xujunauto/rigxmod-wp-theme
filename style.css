@@ -2401,6 +2401,21 @@ body.page .rm-faq {
     max-width: none;
 }
 
+/* Align the page-header title band with the content column below it.
+   Content is capped at 1180px (pages) / 800px (single posts) while the
+   header container uses the full 1280px, which pushed the H1 ~50px left
+   of the content edge. The contact page keeps the full-width header
+   because its content grid is full-width too. */
+body.page .page-header .container {
+    max-width: 1180px;
+}
+body.page-template-page-contact .page-header .container {
+    max-width: var(--rm-container-max);
+}
+body.single-post .page-header .container {
+    max-width: 800px;
+}
+
 /* Intro lead paragraph */
 .rm-lead {
     font-size: 18px;
