@@ -1009,24 +1009,19 @@ add_filter( 'pre_get_document_title', function ( $title ) {
  * RigxMod — Chinese-mode copy corrections.
  * GTranslate machine translation produces a few wrong terms:
  *   北京魔溪/莫西/摩西科技有限公司 -> 北京沫熹科技有限公司
+ *   白家团/上水园 (MT of Baijiatuan Shangshuiyuan) -> 白家疃/尚水园
  *   一般服务/通用服务 -> 综合服务
  *   工程支持 -> 技术支持
  *   博客 -> 新闻资讯
- * This footer script runs only in Chinese mode (gl=zh / zh-cn via
- * URL param or cookie) and rewrites those terms in place, watching
- * for late-injected nodes via MutationObserver. Replacements never
- * reintroduce a source term, so the observer cannot loop.
+ * The script is always emitted and decides client-side whether the
+ * page is in Chinese mode — GTranslate stores the visitor's language
+ * choice in localStorage (__GT_TRANSLATE_LANGS) and auto-translates on
+ * later visits without any gl URL param or cookie, so a server-side
+ * gate would miss those requests. Fixes apply only while Chinese mode
+ * is active; rules never match English text and never reintroduce a
+ * source term, so the MutationObserver cannot loop.
  * ============================================================ */
 add_action( 'wp_footer', function () {
-    $gl = '';
-    if ( ! empty( $_GET['gl'] ) ) {
-        $gl = strtolower( sanitize_text_field( wp_unslash( $_GET['gl'] ) ) );
-    } elseif ( ! empty( $_COOKIE['gl'] ) ) {
-        $gl = strtolower( sanitize_text_field( wp_unslash( $_COOKIE['gl'] ) ) );
-    }
-    if ( 'zh-cn' !== $gl && 'zh' !== $gl ) {
-        return;
-    }
     ?>
     <script>
     (function(){
@@ -1038,6 +1033,15 @@ add_action( 'wp_footer', function () {
             [/工程支持/g, '技术支持'],
             [/博客/g, '新闻资讯']
         ];
+        function isZhNow(){
+            try {
+                if ( /(?:^|[?&])gl=zh/i.test( location.search ) ) { return true; }
+                if ( /(?:^|;\s*)gl=zh/i.test( document.cookie ) ) { return true; }
+                var gt = localStorage.getItem( '__GT_TRANSLATE_LANGS' );
+                if ( gt && /"tgtLang"\s*:\s*"zh/i.test( gt ) ) { return true; }
+            } catch ( e ) {}
+            return false;
+        }
         function fixText(s){
             for ( var i = 0; i < RULES.length; i++ ) {
                 if ( RULES[i][0].test(s) ) {
@@ -1054,8 +1058,16 @@ add_action( 'wp_footer', function () {
                 if ( t !== n.nodeValue ) { n.nodeValue = t; }
             }
         }
-        if ( document.body ) { walk( document.body ); }
+        function run(){
+            if ( isZhNow() && document.body ) { walk( document.body ); }
+        }
+        run();
+        // GTranslate injects translated text progressively after load.
+        window.addEventListener( 'load', run );
+        setTimeout( run, 2000 );
+        setTimeout( run, 5000 );
         var mo = new MutationObserver( function( mutations ){
+            if ( ! isZhNow() ) { return; }
             mutations.forEach( function( m ){
                 if ( m.type === 'characterData' ) {
                     var t = fixText( m.target.nodeValue );
