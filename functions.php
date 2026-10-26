@@ -344,8 +344,8 @@ remove_action( 'woocommerce_sidebar', 'woocommerce_get_sidebar', 10 );
  * Written in English; other languages are served automatically by GTranslate.
  */
 function rigxmod_ddu_notice_html() {
-    return '<div class="rigxmod-ddu-notice" style="background:#fdf0f1;border:1px solid #E31937;border-left:4px solid #E31937;border-radius:4px;padding:12px 14px;margin:0 0 20px;font-size:13px;line-height:1.6;color:#333;">'
-        . '<strong style="color:#B3121D;">' . esc_html__( 'Important - Customs, Duties and Taxes (DDU):', 'rigxmod-autozone' ) . '</strong> '
+    return '<div class="rigxmod-ddu-notice" style="background:#fdf0f1;border:1px solid var(--rm-primary);border-left:4px solid var(--rm-primary);border-radius:4px;padding:12px 14px;margin:0 0 20px;font-size:13px;line-height:1.6;color:#333;">'
+        . '<strong style="color:var(--rm-primary-dark);">' . esc_html__( 'Important - Customs, Duties and Taxes (DDU):', 'rigxmod-autozone' ) . '</strong> '
         . esc_html__( 'All prices, shipping fees and order totals shown exclude import duties, taxes and customs clearance charges levied by the destination country. These charges are the buyer\'s responsibility and must be paid directly to the customs authority or the carrier. We ship DDU (Delivered Duty Unpaid). Please check with your local customs office before placing your order.', 'rigxmod-autozone' )
         . '</div>';
 }

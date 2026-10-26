@@ -2128,7 +2128,7 @@ textarea.form-control {
 }
 
 .campaign-banner {
-    background: linear-gradient(135deg, #E31937 0%, #B3121D 100%);
+    background: linear-gradient(135deg, var(--rm-primary) 0%, var(--rm-primary-dark) 100%);
     border-radius: var(--rm-border-radius-lg, 12px);
     color: #fff;
     padding: 40px 48px;
@@ -2170,13 +2170,13 @@ textarea.form-control {
 
 .campaign-banner .btn-primary {
     background: #fff;
-    color: #E31937;
+    color: var(--rm-primary);
     border: none;
 }
 
 .campaign-banner .btn-primary:hover {
     background: #f5f5f5;
-    color: #B3121D;
+    color: var(--rm-primary-dark);
 }
 
 .coupon-grid {
@@ -2231,7 +2231,7 @@ textarea.form-control {
     transition: background 0.2s;
 }
 
-.coupon-copy:hover { background: #B3121D; }
+.coupon-copy:hover { background: var(--rm-primary-dark); }
 
 .coupon-desc {
     font-size: 13px;
@@ -2401,26 +2401,9 @@ body.page .rm-faq {
     max-width: none;
 }
 
-/* Align the page-header title band with the content column below it.
-   Content is capped at 1180px (pages) / 800px (single posts) while the
-   header container uses the full 1280px, which pushed the H1 ~50px left
-   of the content edge. The contact page keeps the full-width header
-   because its content grid is full-width too. */
-body.page .page-header .container {
-    max-width: 1180px;
-    padding-left: 0;
-    padding-right: 0;
-}
-body.page-template-page-contact .page-header .container {
-    max-width: var(--rm-container-max);
-    padding-left: 16px;
-    padding-right: 16px;
-}
-body.single-post .page-header .container {
-    max-width: 800px;
-    padding-left: 0;
-    padding-right: 0;
-}
+/* page-header .container uses the default .container value (1280px) so
+   the H1 aligns perfectly with the content container below it on every
+   page — About, Contact, News, category archives, all of them. */
 
 /* Intro lead paragraph */
 .rm-lead {
@@ -2951,7 +2934,7 @@ details.rm-faq-item[open] summary::after {
 }
 
 #commentform input#submit.submit:hover {
-    background: #B3121D;
+    background: var(--rm-primary-dark);
 }
 
 /* Contact form: soft focus ring (fields use inline base styles) */
@@ -3587,11 +3570,12 @@ body.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row 
 }
 .shop-cat-title {
     font-size: 40px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--rm-text-primary, #171a1d);
-    line-height: 1.15;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: #171a1d;
     margin: 0;
+    max-width: 840px;
 }
 @media (max-width: 768px) {
     .shop-cat-title { font-size: 29px; }

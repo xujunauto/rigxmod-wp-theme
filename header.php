@@ -155,18 +155,18 @@
     <style>
         #vehicle-modal .vm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
         #vehicle-modal .vm-card{border:1px solid #e5e5e5;border-radius:6px;padding:18px 12px;text-align:center;cursor:pointer;transition:all .2s;background:#fff;}
-        #vehicle-modal .vm-card:hover{border-color:#E31937;box-shadow:0 2px 8px rgba(0,0,0,.1);}
-        #vehicle-modal .vm-card.selected{border-color:#E31937;background:#fdf0f1;box-shadow:0 2px 8px rgba(227,25,55,.15);}
-        #vehicle-modal .vm-card i{font-size:24px;color:#E31937;margin-bottom:8px;}
+        #vehicle-modal .vm-card:hover{border-color:var(--rm-primary);box-shadow:0 2px 8px rgba(0,0,0,.1);}
+        #vehicle-modal .vm-card.selected{border-color:var(--rm-primary);background:#fdf0f1;box-shadow:0 2px 8px rgba(227,25,55,.15);}
+        #vehicle-modal .vm-card i{font-size:24px;color:var(--rm-primary);margin-bottom:8px;}
         #vehicle-modal .vm-card strong{display:block;font-size:13px;line-height:1.3;}
         #vehicle-modal .vm-step-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#999;margin-bottom:10px;}
-        #vehicle-modal #vm-confirm{width:100%;padding:12px;margin-top:20px;background:#E31937;color:#fff;border:none;border-radius:4px;font-weight:600;cursor:pointer;}
+        #vehicle-modal #vm-confirm{width:100%;padding:12px;margin-top:20px;background:var(--rm-primary);color:#fff;border:none;border-radius:4px;font-weight:600;cursor:pointer;}
         #vehicle-modal #vm-confirm:disabled{background:#ccc;cursor:not-allowed;}
         #vehicle-modal #vm-back{background:none;border:none;color:#666;font-size:13px;cursor:pointer;padding:0;margin-bottom:12px;}
-        #vehicle-modal #vm-back:hover{color:#E31937;}
+        #vehicle-modal #vm-back:hover{color:var(--rm-primary);}
         #vehicle-modal #vm-clear{width:100%;padding:10px;margin-top:10px;background:none;color:#999;border:1px solid #e5e5e5;border-radius:4px;font-size:13px;cursor:pointer;}
-        #vehicle-modal #vm-clear:hover{color:#E31937;border-color:#E31937;}
-        #vehicle-modal .vm-current{background:#fdf0f1;border:1px solid #E31937;border-radius:6px;padding:12px;margin-bottom:16px;font-size:14px;display:none;}
+        #vehicle-modal #vm-clear:hover{color:var(--rm-primary);border-color:var(--rm-primary);}
+        #vehicle-modal .vm-current{background:#fdf0f1;border:1px solid var(--rm-primary);border-radius:6px;padding:12px;margin-bottom:16px;font-size:14px;display:none;}
         @media (max-width:480px){#vehicle-modal .vm-grid{grid-template-columns:1fr;}}
     </style>
     <div id="vehicle-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">

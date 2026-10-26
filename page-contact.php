@@ -149,9 +149,9 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
                         <div style="margin-bottom:18px;">
                             <div style="font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;"><?php esc_html_e( 'Email', 'rigxmod-autozone' ); ?></div>
                             <div style="display:flex;flex-direction:column;gap:6px;">
-                                <a href="mailto:info@rigxmod.com" style="color:#222;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-envelope" style="color:#E31937;width:18px;"></i> info@rigxmod.com <span style="color:#999;font-size:12px;">— <?php esc_html_e( 'General Service', 'rigxmod-autozone' ); ?></span></a>
-                                <a href="mailto:sales@rigxmod.com" style="color:#222;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-envelope" style="color:#E31937;width:18px;"></i> sales@rigxmod.com <span style="color:#999;font-size:12px;">— <?php esc_html_e( 'Sales Inquiry', 'rigxmod-autozone' ); ?></span></a>
-                                <a href="mailto:engineering@rigxmod.com" style="color:#222;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-envelope" style="color:#E31937;width:18px;"></i> engineering@rigxmod.com <span style="color:#999;font-size:12px;">— <?php esc_html_e( 'Technical Support', 'rigxmod-autozone' ); ?></span></a>
+                                <a href="mailto:info@rigxmod.com" style="color:#222;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-envelope" style="color:var(--rm-primary);width:18px;"></i> info@rigxmod.com <span style="color:#999;font-size:12px;">— <?php esc_html_e( 'General Service', 'rigxmod-autozone' ); ?></span></a>
+                                <a href="mailto:sales@rigxmod.com" style="color:#222;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-envelope" style="color:var(--rm-primary);width:18px;"></i> sales@rigxmod.com <span style="color:#999;font-size:12px;">— <?php esc_html_e( 'Sales Inquiry', 'rigxmod-autozone' ); ?></span></a>
+                                <a href="mailto:engineering@rigxmod.com" style="color:#222;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-envelope" style="color:var(--rm-primary);width:18px;"></i> engineering@rigxmod.com <span style="color:#999;font-size:12px;">— <?php esc_html_e( 'Technical Support', 'rigxmod-autozone' ); ?></span></a>
                             </div>
                         </div>
 
@@ -203,7 +203,7 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
                         <div>
                             <div style="font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;"><?php esc_html_e( 'Follow Us', 'rigxmod-autozone' ); ?></div>
                             <div style="display:flex;gap:10px;">
-                                <a href="https://www.instagram.com/rigxmod" target="_blank" rel="noopener" style="width:38px;height:38px;border-radius:50%;background:#E31937;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:16px;"><i class="fab fa-instagram"></i></a>
+                                <a href="https://www.instagram.com/rigxmod" target="_blank" rel="noopener" style="width:38px;height:38px;border-radius:50%;background:var(--rm-primary);color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:16px;"><i class="fab fa-instagram"></i></a>
                                 <a href="https://www.youtube.com/@rigxmod" target="_blank" rel="noopener" style="width:38px;height:38px;border-radius:50%;background:#FF0000;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:16px;"><i class="fab fa-youtube"></i></a>
                                 <a href="https://www.tiktok.com/@rigxmod" target="_blank" rel="noopener" style="width:38px;height:38px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:16px;"><i class="fab fa-tiktok"></i></a>
                                 <a href="https://www.facebook.com/rigxmod" target="_blank" rel="noopener" style="width:38px;height:38px;border-radius:50%;background:#1877F2;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:16px;"><i class="fab fa-facebook-f"></i></a>
@@ -217,7 +217,7 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
                 <!-- Contact Form -->
                 <div>
                     <?php if ( $cf_message ) : ?>
-                        <div style="padding:16px 20px;border-radius:6px;margin-bottom:24px;background:<?php echo $cf_type === 'success' ? '#e8f5e9' : '#fce4e4'; ?>;border:1px solid <?php echo $cf_type === 'success' ? '#4caf50' : '#E31937'; ?>;color:<?php echo $cf_type === 'success' ? '#2e7d32' : '#B3121D'; ?>;font-size:14px;">
+                        <div style="padding:16px 20px;border-radius:6px;margin-bottom:24px;background:<?php echo $cf_type === 'success' ? '#e8f5e9' : '#fce4e4'; ?>;border:1px solid <?php echo $cf_type === 'success' ? '#4caf50' : 'var(--rm-primary)'; ?>;color:<?php echo $cf_type === 'success' ? '#2e7d32' : 'var(--rm-primary-dark)'; ?>;font-size:14px;">
                             <?php echo esc_html( $cf_message ); ?>
                         </div>
                     <?php endif; ?>
@@ -251,7 +251,7 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
                             <textarea id="rigxmod_cf_message" name="rigxmod_cf_message" rows="6" required style="width:100%;padding:13px 16px;border:1px solid #e1e4e8;border-radius:10px;font-size:15px;box-sizing:border-box;resize:vertical;transition:border-color 0.18s ease,box-shadow 0.18s ease;"></textarea>
                         </div>
 
-                        <button type="submit" name="rigxmod_cf_submit" value="1" style="padding:14px 32px;background:#E31937;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;align-self:flex-start;transition:background 0.2s;" onmouseover="this.style.background='#B3121D'" onmouseout="this.style.background='#E31937'">
+                        <button type="submit" name="rigxmod_cf_submit" value="1" style="padding:14px 32px;background:var(--rm-primary);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;align-self:flex-start;transition:background 0.2s;" onmouseover="this.style.background='var(--rm-primary-dark)'" onmouseout="this.style.background='var(--rm-primary)'">
                             <?php esc_html_e( 'Send Message', 'rigxmod-autozone' ); ?>
                         </button>
                     </form>

@@ -174,7 +174,7 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
                                 <input type="text" id="rigxmod_nl_website" name="rigxmod_nl_website" value="" tabindex="-1" autocomplete="off">
                             </span>
                             <input type="email" name="rigxmod_nl_email" placeholder="<?php esc_attr_e( 'Your email', 'rigxmod-autozone' ); ?>" required style="flex:1;padding:10px 12px;border:none;border-radius:4px;font-size:13px;">
-                            <button type="submit" style="padding:10px 16px;background:#E31937;color:#fff;border:none;border-radius:4px;font-weight:600;cursor:pointer;font-size:13px;">
+                            <button type="submit" style="padding:10px 16px;background:var(--rm-primary);color:#fff;border:none;border-radius:4px;font-weight:600;cursor:pointer;font-size:13px;">
                                 <?php esc_html_e( 'Join', 'rigxmod-autozone' ); ?>
                             </button>
                         </form>

@@ -12,8 +12,10 @@ get_header();
         <main id="main" class="site-main">
 
             <?php if ( is_product_category() || is_product_tag() ) : ?>
-                <div class="shop-cat-header">
-                    <h1 class="shop-cat-title"><?php echo esc_html( single_term_title( '', false ) ); ?></h1>
+                <div class="container">
+                    <div class="shop-cat-header">
+                        <h1 class="shop-cat-title"><?php echo esc_html( single_term_title( '', false ) ); ?></h1>
+                    </div>
                 </div>
             <?php endif; ?>
 
