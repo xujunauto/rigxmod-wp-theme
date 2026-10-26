@@ -173,3 +173,40 @@ function rigxmod_cart_fragments( $fragments ) {
     return $fragments;
 }
 add_filter( 'woocommerce_add_to_cart_fragments', 'rigxmod_cart_fragments' );
+
+/**
+ * Canonical URL for WooCommerce archives (P0).
+ * Rank Math outputs title/description here but no canonical tag, so we
+ * output it ourselves for shop / product category / product tag pages.
+ */
+function rigxmod_woo_archive_canonical() {
+    if ( is_product_category() || is_product_tag() ) {
+        $link = get_term_link( get_queried_object() );
+        if ( ! is_wp_error( $link ) ) {
+            $paged = get_query_var( 'paged' );
+            if ( $paged > 1 ) {
+                $link = trailingslashit( $link ) . 'page/' . $paged . '/';
+            }
+            echo '<link rel="canonical" href="' . esc_url( $link ) . '" />' . "\n";
+        }
+    } elseif ( is_shop() ) {
+        $shop_id = wc_get_page_id( 'shop' );
+        if ( $shop_id > 0 ) {
+            echo '<link rel="canonical" href="' . esc_url( get_permalink( $shop_id ) ) . '" />' . "\n";
+        }
+    }
+}
+add_action( 'wp_head', 'rigxmod_woo_archive_canonical', 5 );
+
+/**
+ * Lazy-load product images in archive loops (P1).
+ * Only touches shop / category / tag archives — single product galleries
+ * and cart/checkout images are left untouched.
+ */
+function rigxmod_loop_image_lazy( $html ) {
+    if ( ( is_shop() || is_product_category() || is_product_tag() ) && false === strpos( $html, 'loading=' ) ) {
+        $html = str_replace( '<img ', '<img loading="lazy" ', $html );
+    }
+    return $html;
+}
+add_filter( 'woocommerce_product_get_image', 'rigxmod_loop_image_lazy' );
