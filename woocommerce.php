@@ -11,6 +11,12 @@ get_header();
     <div id="primary" class="content-area">
         <main id="main" class="site-main">
 
+            <?php if ( is_product_category() || is_product_tag() ) : ?>
+                <div class="shop-cat-header">
+                    <h1 class="shop-cat-title"><?php echo esc_html( single_term_title( '', false ) ); ?></h1>
+                </div>
+            <?php endif; ?>
+
             <div class="shop-layout container">
                 <aside class="shop-sidebar">
                     <?php if ( is_active_sidebar( 'shop-sidebar' ) ) : ?>
