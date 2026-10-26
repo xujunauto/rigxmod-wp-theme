@@ -30,7 +30,7 @@ get_header();
                 <div class="container">
                     <div class="hero-banner-content">
                         <h1><?php echo esc_html( get_theme_mod( 'rigxmod_hero_title', 'CONQUER ANY TERRAIN' ) ); ?></h1>
-                        <p><?php echo esc_html( get_theme_mod( 'rigxmod_hero_subtitle', 'Premium off-road upgrades for Jetour T1, T2 and Zongheng G700. Aerospace-grade aluminum parts, engineered for extreme conditions.' ) ); ?></p>
+                        <p><?php echo esc_html( get_theme_mod( 'rigxmod_hero_subtitle', 'Premium off-road upgrades for Jetour T1, T2 and G700. Aerospace-grade aluminum parts, engineered for extreme conditions.' ) ); ?></p>
                         <a href="<?php echo esc_url( get_permalink( wc_get_page_id( 'shop' ) ) ); ?>" class="btn btn-primary btn-lg">
                             <?php esc_html_e( 'Shop Now', 'rigxmod-autozone' ); ?>
                         </a>
