@@ -3576,3 +3576,23 @@ body.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row 
         grid-template-columns: minmax(0, 1fr);
     }
 }
+
+/* ============================================================
+   Product category / tag archive H1 (woocommerce_before_shop_loop).
+   Theme's woocommerce.php has no archive H1 by default.
+   Appended only — no existing selectors touched.
+   ============================================================ */
+.shop-cat-header {
+    margin-bottom: 28px;
+}
+.shop-cat-title {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--rm-text-primary, #171a1d);
+    line-height: 1.15;
+    margin: 0;
+}
+@media (max-width: 768px) {
+    .shop-cat-title { font-size: 29px; }
+}

@@ -604,6 +604,20 @@ function rigxmod_restore_stashed_cart() {
 add_action( 'template_redirect', 'rigxmod_restore_stashed_cart', 20 );
 
 /**
+ * 301 redirect /blog/ and /blog/* → /news/*
+ * Posts page slug was renamed from 'blog' to 'news'; keep old URLs working.
+ */
+function rigxmod_blog_to_news_redirect() {
+    $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+    if ( preg_match( '#^/blog(?:/(.*))?$#', $request_uri, $m ) ) {
+        $tail = ! empty( $m[1] ) ? '/' . ltrim( $m[1], '/' ) : '';
+        wp_redirect( home_url( '/news' . $tail ), 301 );
+        exit;
+    }
+}
+add_action( 'template_redirect', 'rigxmod_blog_to_news_redirect', 1 );
+
+/**
  * FAQPage structured data for the FAQs page (SEO rich results).
  */
 function rigxmod_faq_schema() {
