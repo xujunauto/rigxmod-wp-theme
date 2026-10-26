@@ -618,6 +618,24 @@ function rigxmod_blog_to_news_redirect() {
 add_action( 'template_redirect', 'rigxmod_blog_to_news_redirect', 1 );
 
 /**
+ * 301 redirect legacy/misspelled product slugs to current ones.
+ */
+function rigxmod_legacy_product_redirects() {
+    $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+    $rules = array(
+        // Ghost slug — never existed; closest real product is T2 full bull bar
+        '/product/jetour-t2-bull-bar-pro/' => '/product/jetour-t2-full-bull-bar-competition-front-bumper/',
+    );
+    foreach ( $rules as $old => $new ) {
+        if ( $request_uri === $old ) {
+            wp_redirect( home_url( $new ), 301 );
+            exit;
+        }
+    }
+}
+add_action( 'template_redirect', 'rigxmod_legacy_product_redirects', 1 );
+
+/**
  * FAQPage structured data for the FAQs page (SEO rich results).
  */
 function rigxmod_faq_schema() {
@@ -626,7 +644,7 @@ function rigxmod_faq_schema() {
     }
 
     $faqs = array(
-        array( 'Are your parts specifically designed for Jetour T1, T2 and Zongheng G700?', 'Yes. Every RIGX MOD part is engineered for a specific Jetour model, trim and seat layout (5-seat or 6-seat). Check the compatibility table on each product page, or send your model year and a photo of your vehicle to engineering@rigxmod.com and we will confirm fitment before you order.' ),
+        array( 'Are your parts specifically designed for Jetour T1, T2 and G700?', 'Yes. Every RIGX MOD part is engineered for a specific Jetour model, trim and seat layout (5-seat or 6-seat). Check the compatibility table on each product page, or send your model year and a photo of your vehicle to engineering@rigxmod.com and we will confirm fitment before you order.' ),
         array( 'What materials are your off-road parts made from?', 'Our armor, roof racks and structural parts use aerospace-grade aluminum alloy (and reinforced steel where load requires), with precision CNC machining, laser cutting and powder-coated finishes. Every product is tested against vibration, corrosion and real off-road conditions.' ),
         array( 'Are the parts bolt-on, or do they require drilling and modification?', 'Most RIGX MOD parts are direct bolt-on replacements using the original vehicle mounting points. No welding or cutting is required. Each product includes an installation guide, and basic hand tools are usually sufficient.' ),
         array( 'Do I need professional installation?', 'Many customers install our parts at home. For bumpers, suspension lifts and electrical items such as light bars, professional installation is recommended to ensure safety and preserve the product warranty.' ),

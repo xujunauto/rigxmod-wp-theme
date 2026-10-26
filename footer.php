@@ -75,7 +75,7 @@ if ( isset( $_POST['rigxmod_nl_email'] ) ) {
                             RIGX <span>MOD</span>
                         </div>
                         <p>
-                            <?php esc_html_e( 'Precision-engineered off-road upgrade parts for Jetour T1, T2 and Zongheng G700. Aerospace-grade aluminum. Bolt-on installation. Worldwide shipping.', 'rigxmod-autozone' ); ?>
+                            <?php esc_html_e( 'Precision-engineered off-road upgrade parts for Jetour T1, T2 and G700. Aerospace-grade aluminum. Bolt-on installation. Worldwide shipping.', 'rigxmod-autozone' ); ?>
                         </p>
                         <div class="footer-contact-item">
                             <i class="fas fa-envelope"></i>

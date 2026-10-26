@@ -49,7 +49,7 @@ function rigxmod_customize_register( $wp_customize ) {
     ) );
 
     $wp_customize->add_setting( 'rigxmod_hero_subtitle', array(
-        'default'           => __( 'Premium off-road upgrades for Jetour T1, T2 and Zongheng G700. Aerospace-grade aluminum parts, engineered for extreme conditions.', 'rigxmod-autozone' ),
+        'default'           => __( 'Premium off-road upgrades for Jetour T1, T2 and G700. Aerospace-grade aluminum parts, engineered for extreme conditions.', 'rigxmod-autozone' ),
         'sanitize_callback' => 'sanitize_textarea_field',
     ) );
 
