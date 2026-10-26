@@ -449,6 +449,27 @@ function rigxmod_fix_zongheng_translation() {
 add_action( 'wp_footer', 'rigxmod_fix_zongheng_translation', 99 );
 
 /**
+ * Final HTML output filter: remove any remaining "Zongheng" from visible
+ * content (Yoast/Rank Math may auto-generate descriptions with it).
+ * Leaves <script> and <style> blocks untouched.
+ */
+function rigxmod_strip_zongheng( $buffer ) {
+    if ( is_admin() ) return $buffer;
+    // Split by script/style blocks to skip them
+    $parts = preg_split( '/(<(?:script|style)\b[^>]*>.*?<\/(?:script|style)>)/is', $buffer, -1, PREG_SPLIT_DELIM_CAPTURE );
+    foreach ( $parts as $i => $part ) {
+        if ( preg_match( '/^<(script|style)\b/i', $part ) ) continue;
+        $parts[ $i ] = preg_replace( '/Jetour G700\s*\(Zongheng\)/i', 'Jetour G700', $part );
+        $parts[ $i ] = preg_replace( '/Zongheng G700/i', 'G700', $parts[ $i ] );
+        $parts[ $i ] = preg_replace( '/\s*\(Zongheng\)/i', '', $parts[ $i ] );
+    }
+    return implode( '', $parts );
+}
+add_action( 'template_redirect', function() {
+    ob_start( 'rigxmod_strip_zongheng' );
+}, 1 );
+
+/**
  * Cart partial selection (Taobao-style): select some items to checkout,
  * keep the rest in the cart. Unselected items are stashed during checkout
  * and automatically restored when the shopper returns to the cart.
