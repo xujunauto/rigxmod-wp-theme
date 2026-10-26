@@ -194,6 +194,16 @@ function rigxmod_woo_archive_canonical() {
         if ( $shop_id > 0 ) {
             echo '<link rel="canonical" href="' . esc_url( get_permalink( $shop_id ) ) . '" />' . "\n";
         }
+    } elseif ( is_home() ) {
+        $posts_page = (int) get_option( 'page_for_posts' );
+        if ( $posts_page > 0 ) {
+            $link  = get_permalink( $posts_page );
+            $paged = get_query_var( 'paged' );
+            if ( $paged > 1 ) {
+                $link = trailingslashit( $link ) . 'page/' . $paged . '/';
+            }
+            echo '<link rel="canonical" href="' . esc_url( $link ) . '" />' . "\n";
+        }
     }
 }
 add_action( 'wp_head', 'rigxmod_woo_archive_canonical', 5 );

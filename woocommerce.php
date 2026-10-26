@@ -11,10 +11,16 @@ get_header();
     <div id="primary" class="content-area">
         <main id="main" class="site-main">
 
-            <?php if ( is_product_category() || is_product_tag() ) : ?>
+            <?php if ( is_product_category() || is_product_tag() || is_shop() ) : ?>
                 <div class="shop-cat-header">
                     <div class="container">
-                        <h1 class="shop-cat-title"><?php echo esc_html( single_term_title( '', false ) ); ?></h1>
+                        <h1 class="shop-cat-title"><?php
+                            if ( is_shop() ) {
+                                echo esc_html( woocommerce_page_title( false ) );
+                            } else {
+                                echo esc_html( single_term_title( '', false ) );
+                            }
+                        ?></h1>
                     </div>
                 </div>
             <?php endif; ?>
