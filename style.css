@@ -1006,6 +1006,9 @@ h6 { font-size: var(--rm-font-md); }
 
 .product-summary h1 {
     font-size: var(--rm-font-4xl);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: #171a1d;
     margin-bottom: var(--rm-spacing-sm);
     line-height: 1.2;
 }
@@ -2401,9 +2404,21 @@ body.page .rm-faq {
     max-width: none;
 }
 
-/* page-header .container uses the default .container value (1280px) so
-   the H1 aligns perfectly with the content container below it on every
-   page — About, Contact, News, category archives, all of them. */
+/* Align the page-header title band with the content column below it.
+   Pages and single posts cap .entry-content at 1180px (centered), so the
+   header container must use the same 1180px box with no side padding for
+   the H1 text edge to match the content text edge exactly.
+   Contact page (id 58) content spans the full 1280px container with no
+   side padding, so its header container does the same. */
+body.page .page-header .container,
+body.single-post .page-header .container {
+    max-width: 1180px;
+    padding-left: 0;
+    padding-right: 0;
+}
+body.page-id-58 .page-header .container {
+    max-width: var(--rm-container-max);
+}
 
 /* Intro lead paragraph */
 .rm-lead {
@@ -3566,6 +3581,8 @@ body.woocommerce-checkout .woocommerce-shipping-fields__field-wrapper .form-row 
    Appended only — no existing selectors touched.
    ============================================================ */
 .shop-cat-header {
+    padding: 72px 0 44px;
+    border-bottom: 1px solid #ececec;
     margin-bottom: 28px;
 }
 .shop-cat-title {
