@@ -151,8 +151,8 @@ function rigxmod_cross_sells_total( $total ) {
 add_filter( 'woocommerce_cross_sells_total', 'rigxmod_cross_sells_total' );
 
 /**
- * Shop page title — hide /shop/ page title, but add a proper H1 on
- * product category pages (they have none by default).
+ * Shop page title — hide all WC page titles (we output H1 directly in
+ * woocommerce.php template for category/tag, and homepage uses its own).
  */
 function rigxmod_shop_page_title( $title ) {
     if ( is_shop() ) {
@@ -161,29 +161,7 @@ function rigxmod_shop_page_title( $title ) {
     return $title;
 }
 add_filter( 'woocommerce_page_title', 'rigxmod_shop_page_title' );
-add_filter( 'woocommerce_show_page_title', function() {
-    return ! is_shop();
-} );
-
-/**
- * Add H1 to product category / tag archives (default WC template has none).
- * Hooked before the shop loop so it sits above sidebar + products.
- */
-function rigxmod_category_h1() {
-    if ( ! ( is_product_category() || is_product_tag() ) ) {
-        return;
-    }
-    $title = single_term_title( '', false );
-    if ( empty( $title ) ) {
-        $title = single_cat_title( '', false );
-    }
-    if ( ! empty( $title ) ) {
-        echo '<div class="shop-cat-header">';
-        echo '<h1 class="shop-cat-title">' . esc_html( $title ) . '</h1>';
-        echo '</div>';
-    }
-}
-add_action( 'woocommerce_before_shop_loop', 'rigxmod_category_h1', 5 );
+add_filter( 'woocommerce_show_page_title', '__return_false' );
 
 /**
  * Cart fragments
