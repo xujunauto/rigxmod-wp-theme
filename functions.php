@@ -1206,11 +1206,12 @@ add_action( 'wp_footer', function () {
 // ──────────────────────────────────────────────────────────────────
 add_action( 'init', function() {
     if ( ! wp_next_scheduled( 'rigxmod_daily_spam_report' ) ) {
-        // First 8AM in local timezone from right now.
-        $now  = current_time( 'timestamp' );
-        $next = strtotime( 'today 08:00:00', $now );
+        // 08:00 Asia/Shanghai = 00:00 UTC. Use explicit GMT to avoid
+        // strtotime ambiguity with current_time('timestamp') timezone offset.
+        $now  = time();
+        $next = strtotime( 'today 00:00:00 GMT' );
         if ( $next <= $now ) {
-            $next = strtotime( 'tomorrow 08:00:00', $now );
+            $next = strtotime( 'tomorrow 00:00:00 GMT' );
         }
         wp_schedule_event( $next, 'daily', 'rigxmod_daily_spam_report' );
     }
