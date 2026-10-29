@@ -19,21 +19,26 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
         $cf_type    = 'error';
     } else {
         // ──────────────────────────────────────────────────────────────────
-        // FOUR-LAYER ANTI-SAM (honeypot + speed test + forced Turnstile + rate limit)
-        // Bots always get a fake success message so they never adapt; nothing is stored.
+        // FOUR-LAYER ANTI-SPAM (honeypot + speed test + rate limit + forced Turnstile)
+        // Bots always get a fake success message so they never adapt.
+        // Bad submissions are silently stored (no mail sent) so admins can
+        // review them later if needed — nothing is permanently lost.
         // ──────────────────────────────────────────────────────────────────
         $cf_hp   = isset( $_POST['rigxmod_cf_website'] ) ? trim( (string) wp_unslash( $_POST['rigxmod_cf_website'] ) ) : '';
         $cf_ts   = isset( $_POST['rigxmod_cf_ts'] ) ? (int) $_POST['rigxmod_cf_ts'] : 0;
         $cf_ip   = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
         $cf_spam = false;
+        $cf_reason = array();  // which layer blocked it (for audit trail)
 
         // Layer 1 — honeypot
         if ( '' !== $cf_hp ) {
             $cf_spam = true;
+            $cf_reason[] = 'honeypot';
         }
         // Layer 2 — minimum fill time (3s)
         if ( ! $cf_spam && $cf_ts > 0 && time() - $cf_ts < 3 ) {
             $cf_spam = true;
+            $cf_reason[] = 'too-fast';
         }
         // Layer 3 — IP rate limit: ≤5 submissions per IP per 10 min
         if ( ! $cf_spam ) {
@@ -44,6 +49,7 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
             set_transient( $rate_key, $rate, 600 );
             if ( count( $rate ) > 5 ) {
                 $cf_spam = true;
+                $cf_reason[] = 'rate-limit';
             }
         }
         // Layer 4 — Turnstile (FORCED whenever a secret is configured)
@@ -52,8 +58,8 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
             $cf_secret = (string) get_option( 'rigxmod_turnstile_secret', '' );
             if ( '' !== $cf_secret ) {
                 if ( '' === $cf_token ) {
-                    // No token sent while a secret is configured — bot that skipped Turnstile entirely.
                     $cf_spam = true;
+                    $cf_reason[] = 'no-turnstile-token';
                 } else {
                     $cf_verify = wp_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
                         'timeout' => 10,
@@ -69,23 +75,31 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
                         $cf_body = json_decode( wp_remote_retrieve_body( $cf_verify ), true );
                         if ( empty( $cf_body['success'] ) ) {
                             $cf_spam = true;
+                            $cf_reason[] = 'turnstile-failed';
                         }
                     }
                 }
             }
         }
-        // Layer 5 — signature blacklist (case-insensitive) for known bot names
-        if ( ! $cf_spam ) {
-            $cf_name_raw = isset( $_POST['rigxmod_cf_name'] ) ? strtolower( trim( (string) wp_unslash( $_POST['rigxmod_cf_name'] ) ) ) : '';
-            $blacklist   = array( 'robertnople' );
-            foreach ( $blacklist as $banned ) {
-                if ( false !== strpos( $cf_name_raw, $banned ) ) {
-                    $cf_spam = true;
-                    break;
-                }
-            }
-        }
         if ( $cf_spam ) {
+            // Silently archive the attempt (no mail, no notification) so admins can
+            // inspect false positives later. Rotates every 500 entries.
+            $cf_name    = sanitize_text_field( wp_unslash( $_POST['rigxmod_cf_name'] ?? '' ) );
+            $cf_email   = sanitize_email( wp_unslash( $_POST['rigxmod_cf_email'] ?? '' ) );
+            $cf_msg     = sanitize_textarea_field( wp_unslash( $_POST['rigxmod_cf_message'] ?? '' ) );
+            $spam_log   = (array) get_option( 'rigxmod_contact_spam_log', array() );
+            $spam_log[] = array(
+                'name'    => $cf_name,
+                'email'   => $cf_email,
+                'message' => mb_substr( $cf_msg, 0, 200 ),
+                'reason'  => implode( ',', $cf_reason ),
+                'ip'      => $cf_ip,
+                'date'    => current_time( 'mysql' ),
+            );
+            if ( count( $spam_log ) > 500 ) {
+                $spam_log = array_slice( $spam_log, -500 );
+            }
+            update_option( 'rigxmod_contact_spam_log', $spam_log, false );
             $cf_message = __( 'Thank you! Your message has been sent. We will get back to you within 24 hours.', 'rigxmod-autozone' );
             $cf_type    = 'success';
         } else {
