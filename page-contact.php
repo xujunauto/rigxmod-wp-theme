@@ -18,30 +18,70 @@ if ( isset( $_POST['rigxmod_cf_submit'] ) ) {
         $cf_message = __( 'Security check failed. Please try again.', 'rigxmod-autozone' );
         $cf_type    = 'error';
     } else {
-        // Anti-spam: honeypot + minimum fill time (3s) + Cloudflare Turnstile.
-        // Bots get a fake success message so they don't adapt; nothing is stored.
-        $cf_hp     = isset( $_POST['rigxmod_cf_website'] ) ? trim( (string) wp_unslash( $_POST['rigxmod_cf_website'] ) ) : '';
-        $cf_ts     = isset( $_POST['rigxmod_cf_ts'] ) ? (int) $_POST['rigxmod_cf_ts'] : 0;
-        $cf_spam   = ( '' !== $cf_hp || ( $cf_ts > 0 && time() - $cf_ts < 3 ) );
+        // ──────────────────────────────────────────────────────────────────
+        // FOUR-LAYER ANTI-SAM (honeypot + speed test + forced Turnstile + rate limit)
+        // Bots always get a fake success message so they never adapt; nothing is stored.
+        // ──────────────────────────────────────────────────────────────────
+        $cf_hp   = isset( $_POST['rigxmod_cf_website'] ) ? trim( (string) wp_unslash( $_POST['rigxmod_cf_website'] ) ) : '';
+        $cf_ts   = isset( $_POST['rigxmod_cf_ts'] ) ? (int) $_POST['rigxmod_cf_ts'] : 0;
+        $cf_ip   = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        $cf_spam = false;
+
+        // Layer 1 — honeypot
+        if ( '' !== $cf_hp ) {
+            $cf_spam = true;
+        }
+        // Layer 2 — minimum fill time (3s)
+        if ( ! $cf_spam && $cf_ts > 0 && time() - $cf_ts < 3 ) {
+            $cf_spam = true;
+        }
+        // Layer 3 — IP rate limit: ≤5 submissions per IP per 10 min
+        if ( ! $cf_spam ) {
+            $rate_key = 'rigxmod_cf_rate_' . md5( $cf_ip );
+            $rate     = (array) get_transient( $rate_key );
+            $rate[]   = time();
+            $rate     = array_filter( $rate, fn( $t ) => $t > time() - 600 );
+            set_transient( $rate_key, $rate, 600 );
+            if ( count( $rate ) > 5 ) {
+                $cf_spam = true;
+            }
+        }
+        // Layer 4 — Turnstile (FORCED whenever a secret is configured)
         if ( ! $cf_spam ) {
             $cf_token  = isset( $_POST['cf-turnstile-response'] ) ? trim( (string) wp_unslash( $_POST['cf-turnstile-response'] ) ) : '';
             $cf_secret = (string) get_option( 'rigxmod_turnstile_secret', '' );
-            // Only verify when both a token and a secret exist, so a visitor whose
-            // browser failed to load the Turnstile script is never blocked.
-            if ( '' !== $cf_token && '' !== $cf_secret ) {
-                $cf_verify = wp_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
-                    'timeout' => 10,
-                    'body'    => array(
-                        'secret'   => $cf_secret,
-                        'response' => $cf_token,
-                        'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
-                    ),
-                ) );
-                if ( ! is_wp_error( $cf_verify ) ) {
-                    $cf_body = json_decode( wp_remote_retrieve_body( $cf_verify ), true );
-                    if ( empty( $cf_body['success'] ) ) {
-                        $cf_spam = true;
+            if ( '' !== $cf_secret ) {
+                if ( '' === $cf_token ) {
+                    // No token sent while a secret is configured — bot that skipped Turnstile entirely.
+                    $cf_spam = true;
+                } else {
+                    $cf_verify = wp_remote_post( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
+                        'timeout' => 10,
+                        'body'    => array(
+                            'secret'   => $cf_secret,
+                            'response' => $cf_token,
+                            'remoteip' => $cf_ip,
+                        ),
+                    ) );
+                    if ( is_wp_error( $cf_verify ) ) {
+                        // Network hiccup — let it through once, don't block a real customer.
+                    } else {
+                        $cf_body = json_decode( wp_remote_retrieve_body( $cf_verify ), true );
+                        if ( empty( $cf_body['success'] ) ) {
+                            $cf_spam = true;
+                        }
                     }
+                }
+            }
+        }
+        // Layer 5 — signature blacklist (case-insensitive) for known bot names
+        if ( ! $cf_spam ) {
+            $cf_name_raw = isset( $_POST['rigxmod_cf_name'] ) ? strtolower( trim( (string) wp_unslash( $_POST['rigxmod_cf_name'] ) ) ) : '';
+            $blacklist   = array( 'robertnople' );
+            foreach ( $blacklist as $banned ) {
+                if ( false !== strpos( $cf_name_raw, $banned ) ) {
+                    $cf_spam = true;
+                    break;
                 }
             }
         }
