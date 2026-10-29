@@ -1197,3 +1197,112 @@ add_action( 'wp_footer', function () {
     </script>
     <?php
 }, 1000 );
+
+// ──────────────────────────────────────────────────────────────────
+// Daily 8AM spam + contact digest email
+// Sends a plain-English summary every morning so the admin never
+// has to read WP options or SSH into the server to see what the
+// anti-spam filters caught overnight.
+// ──────────────────────────────────────────────────────────────────
+add_action( 'init', function() {
+    if ( ! wp_next_scheduled( 'rigxmod_daily_spam_report' ) ) {
+        // First 8AM in local timezone from right now.
+        $now  = current_time( 'timestamp' );
+        $next = strtotime( 'today 08:00:00', $now );
+        if ( $next <= $now ) {
+            $next = strtotime( 'tomorrow 08:00:00', $now );
+        }
+        wp_schedule_event( $next, 'daily', 'rigxmod_daily_spam_report' );
+    }
+} );
+
+add_action( 'rigxmod_daily_spam_report', function() {
+    $yesterday = current_time( 'mysql', time() - DAY_IN_SECONDS );
+    $today     = current_time( 'mysql' );
+
+    // ── 1. Spam blocked in the last 24h ──
+    $spam_log = (array) get_option( 'rigxmod_contact_spam_log', array() );
+    $today_spam = array_values( array_filter( $spam_log, function( $e ) use ( $yesterday ) {
+        return ! empty( $e['date'] ) && $e['date'] >= $yesterday;
+    } ) );
+
+    // Reason breakdown
+    $reasons = array();
+    foreach ( $today_spam as $e ) {
+        $parts = explode( ',', $e['reason'] ?? 'unknown' );
+        foreach ( $parts as $r ) {
+            $r = trim( $r );
+            $reasons[ $r ] = ( $reasons[ $r ] ?? 0 ) + 1;
+        }
+    }
+    arsort( $reasons );
+
+    // Unique names / emails
+    $unique_names  = count( array_unique( array_column( $today_spam, 'name' ) ) );
+    $unique_emails = count( array_unique( array_column( $today_spam, 'email' ) ) );
+    $unique_ips    = count( array_unique( array_column( $today_spam, 'ip' ) ) );
+
+    // Total spam entries ever (for context — is the bot tapering off?)
+    $total_ever = count( $spam_log );
+
+    // ── 2. Legitimate messages passed through in the last 24h ──
+    $messages = (array) get_option( 'rigxmod_contact_messages', array() );
+    $today_messages = array_values( array_filter( $messages, function( $e ) use ( $yesterday ) {
+        return ! empty( $e['date'] ) && $e['date'] >= $yesterday;
+    } ) );
+
+    // ── 3. Build the email ──
+    $site_name = get_bloginfo( 'name' );
+    $site_url  = home_url( '/' );
+    $subject   = sprintf( '[%s] Daily contact digest — %d blocked, %d genuine',
+        $site_name, count( $today_spam ), count( $today_messages ) );
+
+    $body  = "Good morning,\n\n";
+    $body .= "Here's what happened on {$site_url} over the last 24 hours.\n\n";
+
+    $body .= "━━━ BLOCKED BY ANTI-SPAM: " . count( $today_spam ) . " ━━━\n\n";
+    if ( count( $today_spam ) === 0 ) {
+        $body .= "Nothing blocked. Either Robertnople stopped, or nobody visited the contact form.\n\n";
+    } else {
+        $body .= "Unique: {$unique_names} names, {$unique_emails} emails, {$unique_ips} IPs\n\n";
+        $body .= "By reason:\n";
+        foreach ( $reasons as $r => $c ) {
+            $body .= "  • {$r}: {$c}\n";
+        }
+        $body .= "\nLatest " . min( 10, count( $today_spam ) ) . " attempts (most recent first):\n";
+        foreach ( array_slice( array_reverse( $today_spam ), 0, 10 ) as $e ) {
+            $body .= sprintf( "  [%s] %s <%s>  reason=%s  ip=%s\n",
+                $e['date'] ?? '?',
+                $e['name']  ?? '(empty)',
+                $e['email'] ?? '(empty)',
+                $e['reason'] ?? '?',
+                $e['ip']    ?? '?'
+            );
+        }
+        $body .= "\nAll-time blocked entries in log: {$total_ever}\n\n";
+    }
+
+    $body .= "━━━ GENUINE MESSAGES PASSED: " . count( $today_messages ) . " ━━━\n\n";
+    if ( count( $today_messages ) === 0 ) {
+        $body .= "None. If you were expecting a real customer email that didn't arrive, ";
+        $body .= "check the spam log above — a real person might have been caught.\n\n";
+    } else {
+        foreach ( array_slice( array_reverse( $today_messages ), 0, 10 ) as $m ) {
+            $body .= sprintf( "  [%s] %s <%s>\n       %s\n",
+                $m['date'] ?? '?',
+                $m['name']  ?? '(empty)',
+                $m['email'] ?? '(empty)',
+                mb_substr( $m['message'] ?? '', 0, 140 )
+            );
+        }
+        $body .= "\n";
+    }
+
+    $body .= "━━━ WHAT TO DO IF A REAL CUSTOMER WAS BLOCKED ━━━\n\n";
+    $body .= "1. Reply directly to their email address shown in the spam log.\n";
+    $body .= "2. Forward this email to rigxmod support and we'll tune the filters.\n\n";
+    $body .= "— RIGX MOD automated report\n";
+
+    // ── 4. Send ──
+    wp_mail( 'sales@rigxmod.com', $subject, $body, array( 'Content-Type: text/plain; charset=UTF-8' ) );
+} );
