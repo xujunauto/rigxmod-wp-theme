@@ -62,15 +62,20 @@ add_filter( 'woocommerce_gateway_description', 'rigxmod_zh_bacs_description', 10
 function rigxmod_zh_bacs_instructions( $instructions, $gateway_id ) {
     if ( 'bacs' !== $gateway_id ) { return $instructions; }
     if ( ! function_exists( 'get_locale' ) || get_locale() !== 'zh_CN' ) { return $instructions; }
-    return '请将订单总金额电汇至以下公司账户：
+    return '请通过 CHATS / SWIFT 付款：
 
-收款人：北京沫熹科技有限公司
-银行账号：0200010009200733752
-开户行：中国工商银行北京海淀北太平庄支行
-SWIFT 代码：ICBKCNBJBJM
-银行地址：北京市海淀区北太平庄路33号
+账户号码：63004805731
+账户名称：BEIJING MOXI TECHNOLOGY CO., LTD.（如账户名称过长，可将剩余部分填入地址栏）
+银行名称：JPMorgan Chase Bank N.A., Hong Kong Branch
+SWIFT/BIC 代码：CHASHKHH（如需 11 位请填写 CHASHKHHXXX）
+Sort code：007
+Branch code：863
+银行地址：18/F, 20/F, 22-29/F, CHATER HOUSE, 8 CONNAUGHT ROAD CENTRAL, HONG KONG
+国家/地区：Hong Kong (China)
+账户类型：Business Account
+付款方式：货款请使用 SWIFT/CHATS/FPS 方式支付
 
-重要提示：请使用您的订单号作为付款参考。汇款后，请将汇款凭证发送至 sales@rigxmod.com。您的订单将在确认付款后处理（通常需要3-5个工作日）。';
+重要提示：付款时请在备注（memo/note）中注明[买家名称、发票/合同编号及产品名称]。汇款后，请将汇款凭证发送至 sales@rigxmod.com。您的订单将在确认付款后处理（通常需要3-5个工作日）。';
 }
 add_filter( 'woocommerce_gateway_instructions', 'rigxmod_zh_bacs_instructions', 10, 2 );
 
